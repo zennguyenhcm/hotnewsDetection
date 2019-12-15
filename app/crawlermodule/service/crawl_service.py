@@ -34,8 +34,7 @@ def parse_article_id(article_url) -> str:
 
 
 def crawl_article_from_url(article_url, category_id, publisher_id):
-    import app.crawlermodule.model.entity.Article as Article
-
+    from app.crawlermodule.model.entity.Article import Article
     """8
     parse html elem tags and create an article object from crawling string 
     """
