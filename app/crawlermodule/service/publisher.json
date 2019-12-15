@@ -1,0 +1,23 @@
+{
+  "publisher": [
+    {
+      "pub_id": "1",
+      "pub_name": "Cafef",
+      "pub_url": "http://cafef.vn/",
+      "category": [
+        {
+          "cat_id": "1",
+          "cat_name": "Thoi su",
+          "cat_url": "http://cafef.vn/thoi-su.rss",
+          "pub_id": "1"
+        },
+        {
+          "cat_id": "2",
+          "cat_name": "Chung khoan",
+          "cat_url": "http://cafef.vn/thoi-su.rss",
+          "pub_id": "1"
+        }
+      ]
+    }
+  ]
+}
