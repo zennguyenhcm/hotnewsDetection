@@ -21,16 +21,19 @@ class Article:
         self.category_id = category_id
         self.publisher_id = publisher_id
 
+    # just for debug
     def article_to_string(self):
-        return " ".join(
-            self._id,
-            self.title,
-            self.pubDate,
-            self.content,
-            self.url,
-            self.description,
-            self.tags,
-            self.category_id,
-            self.publisher_id,
+        return "_____".join(
+            (
+                self._id,
+                self.title,
+                self.pubDate,
+                self.content,
+                self.url,
+                self.description,
+                self.tags,
+                self.category_id,
+                self.publisher_id,
+            )
         )
 
