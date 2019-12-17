@@ -1,4 +1,4 @@
-from flask import request, Blueprint
+from flask import request, Blueprint, jsonify
 from app.crawlermodule.service import crawl_service as crawlerService
 
 # Create blueprint
@@ -10,6 +10,14 @@ def crawl_data():
     return crawlerService.crawl_all_articles_in_category(
         "1", "http://cafef.vn/thoi-su.rss", "1"
     )
+
+
+@crawler_page.route("/home", methods=["POST", "GET"])
+def initalize():
+    print("hello")
+    response = crawlerService.get_all_publishers()
+    print(response)
+    return jsonify(response)
 
 
 # @simple_page.route('/helloworld', methods=['POST', 'GET'])

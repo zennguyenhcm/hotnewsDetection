@@ -1,9 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
-
 import json
 import xml.etree.ElementTree as ET
 import re
+import os.path
+import sys
 
 
 def parse_likeRate_from_string(article_url):
@@ -66,11 +67,12 @@ def crawl_article_from_url(article_url, category_id, publisher_id):
     # get tags
     tags_string = article_parser.find("div", {"class": "tagdetail"}).get_text()
     tags = parse_tags_from_string(tags_string)
-    new_article = Article(
+    _article = Article(
         _id, title, pubDate, content, url, description, tags, category_id, publisher_id
     )
-    print(new_article.article_to_string())
-    return new_article.article_to_string()
+    # print(new_article.article_to_string())
+    # return new_article.article_to_string()
+    return _article
 
 
 def crawl_all_articles_in_category(
@@ -86,11 +88,23 @@ def crawl_all_articles_in_category(
         article_url = item_parser.find("a")["href"]
         new_article = crawl_article_from_url(article_url, category_id, pub_id)
         articles_list.append(new_article)
-    return "\n".join(article for article in articles_list)
+    # return "\n".join(article for article in articles_list)
+    return articles_list
 
+def get_all_categories_by_publisherId(pub_id):
+    try:
+        with open('publisher.json') as jsonFile:
+            data = json.load(jsonFile)
+            for category in data['publisher']['category']:
+                pass
 
+    except:
+        pass
+    finally:    
+        pass
+    
 def crawl_all(pub_id):
-    import app.crawlermodule.model.entity.Category
+    from ..model.entity.Category import Category
 
     # get list of categories
     category_list = get_all_categories_by_publisherId(pub_id)
@@ -99,3 +113,18 @@ def crawl_all(pub_id):
         articles_list = crawl_all_articles(cat.id, cat.url, pub_id)
         # write into json file
 
+def get_all_publishers():
+    print(sys.path[0])
+    print(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'))
+    print('2')
+    try:
+        with open(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'),  encoding="utf8") as jsonFile:
+            print('3')
+            data = json.load(jsonFile)
+            list_publishers = data["publisher"]
+            print(list_publishers)
+            return list_publishers
+    except (IOError, FileNotFoundError):
+        print('cannot open')
+    finally:
+        pass       

@@ -6,6 +6,8 @@ from app.modulehelloworld.controller.hello_world import simple_page
 from app.crawlermodule.controller.crawler import crawler_page
 from flask import Flask, render_template
 from .crawlermodule.model.entity.Article import Article
+from .crawlermodule.model.entity.Category import Category
+from .crawlermodule.model.entity.Publisher import Publisher
 
 
 # Define the WSGI application object

@@ -7,6 +7,61 @@
       "category": [
         {
           "cat_id": "1",
+          "cat_name": "Thời sự",
+          "cat_url": "http://cafef.vn/thoi-su.rss",
+          "pub_id": "1"
+        },
+        {
+          "cat_id": "2",
+          "cat_name": "Thị trường chứng khoán",
+          "cat_url": "http://cafef.vn/thi-truong-chung-khoan.rss",
+          "pub_id": "1"
+        },
+        {
+          "cat_id": "3",
+          "cat_name": "Bất động sản",
+          "cat_url": "http://cafef.vn/bat-dong-san.rss",
+          "pub_id": "1"
+        },
+        {
+          "cat_id": "4",
+          "cat_name": "Doanh nghiệp",
+          "cat_url": "http://cafef.vn/doanh-nghiep.rss",
+          "pub_id": "1"
+        },
+        {
+          "cat_id": "5",
+          "cat_name": "Tài chính ngân hàng",
+          "cat_url": "http://cafef.vn/tai-chinh-ngan-hang.rss",
+          "pub_id": "1"
+        },
+        {
+          "cat_id": "6",
+          "cat_name": "Tài chính quốc tế",
+          "cat_url": "http://cafef.vn/tai-chinh-quoc-te.rss",
+          "pub_id": "1"
+        },
+        {
+          "cat_id": "7",
+          "cat_name": "Kinh tế vĩ mô",
+          "cat_url": "http://cafef.vn/vi-mo-dau-tu.rss",
+          "pub_id": "1"
+        },
+        {
+          "cat_id": "8",
+          "cat_name": "Hàng hóa nguyên liệu",
+          "cat_url": "http://cafef.vn/hang-hoa-nguyen-lieu.rss",
+          "pub_id": "1"
+        }
+      ]
+    },
+    {
+      "pub_id": "2",
+      "pub_name": "Kenh14",
+      "pub_url": "http://kenh14.vn/",
+      "category": [
+        {
+          "cat_id": "1",
           "cat_name": "Thoi su",
           "cat_url": "http://cafef.vn/thoi-su.rss",
           "pub_id": "1"
