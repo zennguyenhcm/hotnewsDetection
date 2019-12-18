@@ -51,28 +51,62 @@ def crawl_article_from_url(article_url, category_id, publisher_id):
 
     # get title
     print("hello")
-    title = article_parser.find("h1", class_="title").get_text().strip()
-
+    title=""
+    try:
+        title = article_parser.find("h1", class_="title").get_text().strip()
+        print(title)
+    except AttributeError:
+        print("not found title")   
     # get published Date
-    pubDate = (
-        article_parser.find("span", class_="pdate").get_text().strip().split(" ")[0]
-    )
+    pubDate=""
+    try:
+        pubDate = (
+            article_parser.find("span", class_="pdate").get_text().strip().split(" ")[0]
+        )
+    except AttributeError:
+        print('not found pubDate')
 
     # get description
-    description = article_parser.find("h2", class_="sapo").get_text().strip()
+    description=""
+    try:
+        description = article_parser.find("h2", class_="sapo").get_text().strip()
+    except AttributeError:
+        print('not found description')
 
     # get content
-    content = article_parser.find("span", {"id": "mainContent"}).get_text().strip()
-
+    content=""
+    try:
+        content = article_parser.find("span", {"id": "mainContent"}).get_text().strip()
+    except AttributeError:
+        print('not found content')    
     # get tags
-    tags_string = article_parser.find("div", {"class": "tagdetail"}).get_text()
-    tags = parse_tags_from_string(tags_string)
-    _article = Article(
-        _id, title, pubDate, content, url, description, tags, category_id, publisher_id
-    )
+    tags =""
+    try:
+        tags_string = article_parser.find("div", {"class": "tagdetail"}).get_text()
+        tags = parse_tags_from_string(tags_string)
+    except AttributeError:
+        print("not found tags")
+    # return an article object 
+    # _article = Article(
+    #     _id, title, pubDate, content, url, description, tags, category_id, publisher_id
+    # )
+
     # print(new_article.article_to_string())
     # return new_article.article_to_string()
-    return _article
+
+    #return a dictionary 
+    _article_dict ={
+        "id":_id,
+        "url": article_url,
+        "category_id": category_id,
+        "publisher_id": publisher_id,
+        "title":title,
+        "pubDate":pubDate,
+        "description":description,
+        "content":content,
+        "tags":tags
+    } 
+    return _article_dict
 
 
 def crawl_all_articles_in_category(
@@ -91,27 +125,19 @@ def crawl_all_articles_in_category(
     # return "\n".join(article for article in articles_list)
     return articles_list
 
-def get_all_categories_by_publisherId(pub_id):
-    try:
-        with open('publisher.json') as jsonFile:
-            data = json.load(jsonFile)
-            for category in data['publisher']['category']:
-                pass
+# def get_all_categories_by_publisherId(pub_id):
+#     try:
+#         with open('publisher.json') as jsonFile:
+#             data = json.load(jsonFile)
+#             for category in data['publisher']['category']:
+#                 pass
 
-    except:
-        pass
-    finally:    
-        pass
+#     except:
+#         pass
+#     finally:    
+#         pass
     
-def crawl_all(pub_id):
-    from ..model.entity.Category import Category
 
-    # get list of categories
-    category_list = get_all_categories_by_publisherId(pub_id)
-
-    for cat in category_list:
-        articles_list = crawl_all_articles(cat.id, cat.url, pub_id)
-        # write into json file
 
 def get_all_publishers():
     print(sys.path[0])
@@ -121,10 +147,43 @@ def get_all_publishers():
         with open(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'),  encoding="utf8") as jsonFile:
             print('3')
             data = json.load(jsonFile)
-            list_publishers = data["publisher"]
-            print(list_publishers)
-            return list_publishers
+            publishers_list = data["publisher"]
+            return publishers_list
     except (IOError, FileNotFoundError):
         print('cannot open')
     finally:
-        pass       
+        pass
+
+
+def get_all_categories(publisher_id):
+    print(sys.path[0])
+    print(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'))
+    print('2')
+    try:
+        with open(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'),  encoding="utf8") as jsonFile:
+            print('3')
+            data = json.load(jsonFile)
+            publishers_list = data["publisher"]
+            for pub in publishers_list:
+                if (pub['pub_id'] == publisher_id):
+                    return pub['category']
+                else:
+                    print('not found publisher_id')
+                    return "pub_id not exist"
+    except (IOError, FileNotFoundError):
+        print('cannot open')
+    finally:
+        pass
+
+def crawl_all_articles(publisher_id):
+    from ..model.entity.Category import Category
+
+    # get list of categories
+    category_list = get_all_categories(publisher_id)
+    cat_dict={}
+    for cat in category_list:
+        articles_list = crawl_all_articles_in_category(cat['cat_id'], cat['cat_url'], publisher_id)
+        cat_dict[cat['cat_name']]=articles_list
+        print(cat_dict)
+    return cat_dict    
+        # write into json file    5
