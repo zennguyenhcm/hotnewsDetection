@@ -8,6 +8,8 @@ import sys
 from datetime import datetime
 import csv
 import pandas as pd
+from datetime import date, timedelta, datetime
+import datetime as dt
 
 
 def parse_likeRate_from_string(article_url):
@@ -59,9 +61,9 @@ def crawl_article_from_url(article_url, category_id, publisher_id):
     title=""
     try:
         title = article_parser.find("h1", class_="title").get_text().strip()
-        print(title)
     except AttributeError:
-        print("not found title")   
+        print("not found title")
+        print(url)   
     # get published Date
     pubDate=""
     try:
@@ -70,20 +72,22 @@ def crawl_article_from_url(article_url, category_id, publisher_id):
         )
     except AttributeError:
         print('not found pubDate')
-
+        print(url) 
     # get description
     description=""
     try:
         description = article_parser.find("h2", class_="sapo").get_text().strip()
     except AttributeError:
         print('not found description')
-
+        print(url) 
     # get content
     content=""
     try:
         content = article_parser.find("span", {"id": "mainContent"}).get_text().strip()
     except AttributeError:
-        print('not found content')    
+        print('not found content')
+        print(url)
+        return("error")      
     # get tags
     tags =""
     try:
@@ -91,6 +95,7 @@ def crawl_article_from_url(article_url, category_id, publisher_id):
         tags = parse_tags_from_string(tags_string)
     except AttributeError:
         print("not found tags")
+        print(url) 
     #get like rate     
     # likeRate=""
     # try:
@@ -123,7 +128,7 @@ def crawl_article_from_url(article_url, category_id, publisher_id):
 def set_article_detail(crawlDate, article_id, article_url):
     new_article_detail = {
         "articleDetail_id":str(crawlDate+article_id),
-        "articlle_id": article_id,
+        "article_id": article_id,
         "like_url": "https://www.facebook.com/v2.5/plugins/like.php?action=like&app_id=115279665149396&channel=https%3A%2F%2Fstaticxlie%2Fxd_arbiter.php%3Fversion%3D44%23cb%3Df3defe6b2094794%26domain%3Dcafef.vn%26origin%3Dhttp%253A%252F%252Fcafef.vn%252Ff3c3b225a045e08%26relation%3Dparent.parent&container_width=85&href=http%3A%2F%2Fcafef.vn%2F"
         + article_url.split("/")[3]
         + "&layout=button_count&locale=vi_VN&sdk=joey&share=false&show_faces=false&size=small",
@@ -145,7 +150,11 @@ def crawl_all_articles_in_category(
         item_parser = BeautifulSoup(item_content, "html5lib")
         article_url = item_parser.find("a")["href"]
         new_article = crawl_article_from_url(article_url, category_id, pub_id)
-        articles_list.append(new_article)
+        if new_article =='error':
+            print("crawling error")
+            continue
+        else:
+            articles_list.append(new_article)
     # return "\n".join(article for article in articles_list)
     return articles_list
 
@@ -199,14 +208,28 @@ def get_all_categories(publisher_id):
     finally:
         pass
 
+def convert_string_to_date(_str):
+    return dt.datetime.strptime(_str,"%d-%m-%Y").date()
+
+def write_to_csv(filePath, data, _mode):
+    _df = pd.DataFrame(data)
+    if 'title' in _df.columns:
+        _df.drop_duplicates(subset='title',keep="first", inplace=True)
+    else:
+        _df.drop_duplicates(subset='article_id',keep="first", inplace=True)
+    print(_df)
+    with open(filePath,mode=_mode,encoding="utf-8") as f:
+        print('hello2')
+        _df.to_csv(f)
+
 def crawl_all_articles(publisher_id):
     from ..model.entity.Category import Category
-
+    print("Start crawling ...")
     # get list of categories
     category_list = get_all_categories(publisher_id)
-
+    #initalize some stuffs
     cat_dict_api={}
-    articles_dt_list=[]
+    articles_crawled_list=[]
     article_details_list=[]
 
     for cat in category_list:
@@ -223,42 +246,72 @@ def crawl_all_articles(publisher_id):
             #       add_to_file
             #       update_likeRate
         # } 
-        articles_dt_list.extend(articles_list)
-
+        articles_crawled_list.extend(articles_list)
+        # add to api string
         cat_dict_api[cat['cat_name']]=articles_list
         #print(cat_dict_api)
-    #write into csv file
+    #store data into csv file
+    articles_fpath = os.path.join(sys.path[0], 'app/crawlermodule/service/articles_dataset.csv')
+    details_fpath = os.path.join(sys.path[0], 'app/crawlermodule/service/article_details.csv')
     try:
-        print('hello in write to csv')
-        if os.path.getsize(os.path.join(sys.path[0], r'app\crawlermodule\service\articles_dataset.csv')) ==0:
+        print('crawling done. start storing ...')
+        #check if the files is empty or not, if yes: add all data into file, if no: check article if duplicate or not 
+        if os.path.getsize(articles_fpath) ==0:
             print("file is empty")
-            for article in articles_dt_list:
-                new_article_detail = set_article_detail(article["crawlDate"], article["article_id"], article["article_url"])
+            print(len(articles_crawled_list))
+            for article in articles_crawled_list:
+                new_article_detail = set_article_detail(article["crawlDate"], article["id"], article["url"])
                 article_details_list.append(new_article_detail)
-            # write into file 
-            articles_df = pd.DataFrame.from_dict(articles_dt_list)
-            with open('articles_dataset.csv') as f:
-                articles_df.to_csv(f)
-            
-            article_details_df = pd.DataFrame.from_dict(article_details_list)
-            with open('article_details.csv') as f:
-                article_details_df.to_csv(f)
+            print('details',len(article_details_list))
+            # write into file
+            # print('hello1')
+            # write article's details to articles_dataset.csv
+            # articles_df = pd.DataFrame(articles_crawled_list)
+            # articles_df.drop_duplicates(subset='title',keep="first", inplace=True)
+            # print(articles_df)
+            # with open(articles_fpath,'w',encoding="utf-8") as f:
+            #     print('hello2')
+            #     articles_df.to_csv(f)
+            write_to_csv(articles_fpath, articles_crawled_list, 'w')
+
+            # write article's details to article_details.csv    
+            # article_details_df = pd.DataFrame.from_dict(article_details_list)
+            # article_details_df.drop_duplicates(subset='article_id',keep="first", inplace=True)
+            # with open(details_fpath,'w', encoding="utf-8") as f:
+            #     article_details_df.to_csv(f)
+            write_to_csv(details_fpath, article_details_list,'w')
         else:
-            _articles = pd.read_csv("articles_dataset.csv")
-            for article in articles_dt_list:
-                if (_articles[article.article_id==article["article_id"]]!=null):
+            # load values in articles dataset file
+            print("updating ...") 
+            _articles = pd.read_csv(articles_fpath)
+            # get lastest articles published in the current week
+            lastest_articles = _articles[date.today() <= _articles['pubDate'].apply(convert_string_to_date) + timedelta(days=1)]
+            print(lastest_articles['pubDate'])
+            for article in articles_crawled_list:
+                # check if the article is in lastest list from dataset or not, if yes->remove it from crawled list,if no: continue
+                if not (lastest_articles[lastest_articles['id']==article['id']].empty):
+                    print(article['title'])
                     # update_article_detail(article["article_id"])
-                    print("update")
-                    articles_dt_list.pop(articles_dt_list.index(article))
+                    # print("update")
+                    # articles_dt_list.pop(articles_dt_list.index(article))
+                    # => the article is new
+                    #create new article detail
+                    new_article_detail = set_article_detail(article["crawlDate"], article["id"], article["url"])
+                    article_details_list.append(new_article_detail) 
+                    continue
                 else:
-                    new_article_detail = set_article_detail(article["crawlDate"], article["article_id"], article["article_url"])
-                    article_details_list.append(new_article_detail)        
-
-
+                    # => the article is available in dataset, should remove it from crawled list
+                    print("pop")
+                    print('begin',len(articles_crawled_list))
+                    articles_crawled_list.pop(articles_crawled_list.index(article))
+                    print(articles_crawled_list.index(article))
+                    print(article['title'])
+                    print('after',len(articles_crawled_list))
+            #write data to file
+            write_to_csv(articles_fpath, articles_crawled_list, 'a')
+            write_to_csv(details_fpath, article_details_list, 'a')   
     except Exception as e:
         print(e)
-
-
     return cat_dict_api    
         # write into json file 5
 
