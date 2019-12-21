@@ -10,6 +10,7 @@ class Article:
         tags: str = None,
         category_id: str = None,
         publisher_id: str = None,
+        crawlDate: str = None,
     ) -> None:
         self._id = _id
         self.title = title
@@ -20,6 +21,7 @@ class Article:
         self.tags = tags
         self.category_id = category_id
         self.publisher_id = publisher_id
+        self.crawlDate =crawlDate
 
     # just for debug
     def article_to_string(self):
@@ -34,6 +36,7 @@ class Article:
                 self.tags,
                 self.category_id,
                 self.publisher_id,
+                self.crawlDate,
             )
         )
 
