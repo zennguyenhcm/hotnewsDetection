@@ -193,7 +193,7 @@ def get_all_categories(publisher_id):
     #print(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'))
     #print('2')
     try:
-        with open(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'),  encoding="utf8") as jsonFile:
+        with open(os.path.join(sys.path[0], 'app/crawlermodule/service/publisher.json'),  encoding="utf8") as jsonFile:
             #print('3')
             data = json.load(jsonFile)
             publishers_list = data["publisher"]
@@ -208,8 +208,11 @@ def get_all_categories(publisher_id):
     finally:
         pass
 
-def convert_string_to_date(_str):
+def convert_string_to_date(_str,formatted_str):
     return dt.datetime.strptime(_str,"%d-%m-%Y").date()
+
+def convert_string_to_date_full(_str):
+    return dt.datetime.strptime(_str,"%d/%m/%Y %H:%M:%S").date()
 
 def write_to_csv(filePath, data, _mode):
     _df = pd.DataFrame(data)
@@ -285,33 +288,41 @@ def crawl_all_articles(publisher_id):
             print("updating ...") 
             _articles = pd.read_csv(articles_fpath)
             # get lastest articles published in the current week
-            lastest_articles = _articles[date.today() <= _articles['pubDate'].apply(convert_string_to_date) + timedelta(days=1)]
+            # lastest_articles = _articles[date.today() <= _articles['pubDate'].apply(convert_string_to_date) + timedelta(days=1)]
+            lastest_articles = _articles[date.today()-timedelta(days=3) <= _articles['crawlDate'].apply(convert_string_to_date_full)]
             print(lastest_articles['pubDate'])
             for article in articles_crawled_list:
                 # check if the article is in lastest list from dataset or not, if yes->remove it from crawled list,if no: continue
-                if not (lastest_articles[lastest_articles['id']==article['id']].empty):
-                    print(article['title'])
-                    # update_article_detail(article["article_id"])
-                    # print("update")
-                    # articles_dt_list.pop(articles_dt_list.index(article))
-                    # => the article is new
-                    #create new article detail
+                if lastest_articles.empty:
                     new_article_detail = set_article_detail(article["crawlDate"], article["id"], article["url"])
                     article_details_list.append(new_article_detail) 
                     continue
                 else:
-                    # => the article is available in dataset, should remove it from crawled list
-                    print("pop")
-                    print('begin',len(articles_crawled_list))
-                    articles_crawled_list.pop(articles_crawled_list.index(article))
-                    print(articles_crawled_list.index(article))
-                    print(article['title'])
-                    print('after',len(articles_crawled_list))
+                    if  (not lastest_articles[lastest_articles['id']==article['id']].empty):
+                        print(article['title'])
+                        # update_article_detail(article["article_id"])
+                        # print("update")
+                        # articles_dt_list.pop(articles_dt_list.index(article))
+                        # => the article is new
+                        #create new article detail
+                        new_article_detail = set_article_detail(article["crawlDate"], article["id"], article["url"])
+                        article_details_list.append(new_article_detail) 
+                        continue
+                    else:
+                        # => the article is available in dataset, should remove it from crawled list
+                        print("pop")
+                        print('begin',len(articles_crawled_list))
+                        articles_crawled_list.pop(articles_crawled_list.index(article))
+                        print(articles_crawled_list.index(article))
+                        print(article['title'])
+                        print('after',len(articles_crawled_list))
+                
             #write data to file
             write_to_csv(articles_fpath, articles_crawled_list, 'a')
             write_to_csv(details_fpath, article_details_list, 'a')   
     except Exception as e:
         print(e)
+        raise e
     return cat_dict_api    
         # write into json file 5
 
