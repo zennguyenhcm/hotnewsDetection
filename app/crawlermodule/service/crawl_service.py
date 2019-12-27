@@ -292,13 +292,13 @@ def crawl_all_articles(publisher_id):
             lastest_articles = _articles[date.today()-timedelta(days=3) <= _articles['crawlDate'].apply(convert_string_to_date_full)]
             print(lastest_articles['pubDate'])
             for article in articles_crawled_list:
-                # check if the article is in lastest list from dataset or not, if yes->remove it from crawled list,if no: continue
                 if lastest_articles.empty:
                     new_article_detail = set_article_detail(article["crawlDate"], article["id"], article["url"])
                     article_details_list.append(new_article_detail) 
                     continue
                 else:
-                    if  (not lastest_articles[lastest_articles['id']==article['id']].empty):
+                    # check if the article is in lastest list from dataset or not, if yes->remove it from crawled list,if no: continue
+                    if not (lastest_articles[lastest_articles['id']==article['id']].empty):
                         print(article['title'])
                         # update_article_detail(article["article_id"])
                         # print("update")
