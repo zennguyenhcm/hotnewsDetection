@@ -223,7 +223,10 @@ def write_to_csv(filePath, data, _mode):
     print(_df)
     with open(filePath,mode=_mode,encoding="utf-8") as f:
         print('hello2')
-        _df.to_csv(f)
+        if _mode == "a":
+            _df.to_csv(f,header=False)
+        else:
+            _df.to_csv(f)
 
 def crawl_all_articles(publisher_id):
     from ..model.entity.Category import Category
@@ -259,7 +262,7 @@ def crawl_all_articles(publisher_id):
     try:
         print('crawling done. start storing ...')
         #check if the files is empty or not, if yes: add all data into file, if no: check article if duplicate or not 
-        if os.path.getsize(articles_fpath) ==0:
+        if not os.path.exists(articles_fpath):
             print("file is empty")
             print(len(articles_crawled_list))
             for article in articles_crawled_list:
@@ -298,7 +301,7 @@ def crawl_all_articles(publisher_id):
                     continue
                 else:
                     # check if the article is in lastest list from dataset or not, if yes->remove it from crawled list,if no: continue
-                    if not (lastest_articles[lastest_articles['id']==article['id']].empty):
+                    if not (lastest_articles[lastest_articles['id']==int(article['id'])].empty):
                         print(article['title'])
                         # update_article_detail(article["article_id"])
                         # print("update")
@@ -313,7 +316,7 @@ def crawl_all_articles(publisher_id):
                         print("pop")
                         print('begin',len(articles_crawled_list))
                         articles_crawled_list.pop(articles_crawled_list.index(article))
-                        print(articles_crawled_list.index(article))
+                        # print(articles_crawled_list.index(article))
                         print(article['title'])
                         print('after',len(articles_crawled_list))
                 
