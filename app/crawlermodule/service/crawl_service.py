@@ -209,7 +209,7 @@ def get_all_categories(publisher_id):
     #print(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'))
     #print('2')
     try:
-        with open(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'),  encoding="utf8") as jsonFile:
+        with open(os.path.join(sys.path[0], 'app/crawlermodule/service/publisher.json'),  encoding="utf8") as jsonFile:
             #print('3')
             data = json.load(jsonFile)
             publishers_list = data["publisher"]
@@ -224,8 +224,11 @@ def get_all_categories(publisher_id):
     finally:
         pass
 
-def convert_string_to_date(_str):
+def convert_string_to_date(_str,formatted_str):
     return dt.datetime.strptime(_str,"%d-%m-%Y").date()
+
+def convert_string_to_date_full(_str):
+    return dt.datetime.strptime(_str,"%d/%m/%Y %H:%M:%S").date()
 
 def write_to_csv(filePath, data, _mode):
     try:
@@ -324,7 +327,7 @@ def crawl_all_articles(publisher_id):
     try:
         print('crawling done. start storing ...')
         #check if the files is empty or not, if yes: add all data into file, if no: check article if duplicate or not 
-        if os.path.getsize(articles_fpath) ==0:
+        if not os.path.exists(articles_fpath):
             print("file is empty")
             print(len(articles_crawled_list))
             for article in articles_crawled_list:
@@ -356,8 +359,9 @@ def crawl_all_articles(publisher_id):
             #
             _articles = pd.read_csv(articles_fpath)
             # get lastest articles published in the current week
-            lastest_articles = _articles[date.today()-timedelta(days=3) <= _articles['crawlDate'].apply(convert_string_to_date) <= date.today()]
-            print("number of lastest_articles", len(lastest_articles))
+            # lastest_articles = _articles[date.today() <= _articles['pubDate'].apply(convert_string_to_date) + timedelta(days=1)]
+            lastest_articles = _articles[date.today()-timedelta(days=3) <= _articles['crawlDate'].apply(convert_string_to_date_full)]
+            print(lastest_articles['pubDate'])
             for article in articles_crawled_list:
                 # check if the article is in lastest list from dataset or not, if yes->remove it from crawled list,if no: continue
                 print(article["title"])
@@ -383,7 +387,6 @@ def crawl_all_articles(publisher_id):
                     # => the article is available in dataset, should remove it from crawled list
                     print("pop")
                     print('begin',len(articles_crawled_list))
-                    articles_crawled_list.pop(articles_crawled_list.index(article))
                     print("old article:",article['title'])
                     print('after',len(articles_crawled_list))
             #write data to file

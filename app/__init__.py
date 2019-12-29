@@ -1,5 +1,5 @@
 # Import SQLAlchemy
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 # Import flask and template operators
 from app.modulehelloworld.service import hello_world
 from app.modulehelloworld.controller.hello_world import simple_page
@@ -19,7 +19,7 @@ app.config.from_object('config')
 
 # Define the database object which is imported
 # by modules and controllers
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
 
 # Sample HTTP error handling
 @app.errorhandler(404)
