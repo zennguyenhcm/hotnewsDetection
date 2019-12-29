@@ -292,6 +292,10 @@ def update_likeRate():
     finally:
         return
 
+def is_file_empty(file_path):
+    """ Check if file is empty by confirming if its size is 0 bytes"""
+    # Check if file exist and it is empty
+    return os.path.exists(file_path) and os.stat(file_path).st_size == 0
 
 def crawl_all_articles(publisher_id):
     from ..model.entity.Category import Category
@@ -327,7 +331,7 @@ def crawl_all_articles(publisher_id):
     try:
         print('crawling done. start storing ...')
         #check if the files is empty or not, if yes: add all data into file, if no: check article if duplicate or not 
-        if not os.path.exists(articles_fpath):
+        if is_file_empty(articles_fpath):
             print("file is empty")
             print(len(articles_crawled_list))
             for article in articles_crawled_list:
