@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from app.modulehelloworld.service import hello_world
 from app.modulehelloworld.controller.hello_world import simple_page
 from app.crawlermodule.controller.crawler import crawler_page
+from app.keywordExtrationModule.controller.hotKeywordAnalyzer import hotKeywordAnalyzer_page
 from flask import Flask, render_template
 from .crawlermodule.model.entity.Article import Article
 from .crawlermodule.model.entity.Category import Category
@@ -32,7 +33,7 @@ def not_found(error):
 # Register blueprint(s)
 app.register_blueprint(simple_page)
 app.register_blueprint(crawler_page)
-
+app.register_blueprint(hotKeywordAnalyzer_page)
 # Build the database:
 # This will create the database file using SQLAlchemy
 # db.drop_all()
