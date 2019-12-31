@@ -208,10 +208,23 @@ def get_all_categories(publisher_id):
     finally:
         pass
 
+def statistic_keywords(list_of_keywords):
+    dict_result = {}
+    for index,item in enumerate(list_of_keywords):
+        array = item.split(";")
+        for a in array:
+            if a not in dict_result.keys():
+                dict_result[a] = str(index)
+            else:
+                dict_result[a] = dict_result[a] + "_" + str(index)
+    for key,value in dict_result.items():
+        dict_result[key] = value.split("_")
+    return dict_result
+
 def get_top_keyword():
     with open(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'),  encoding="utf8") as jsonFile:
         data = json.load(jsonFile)
-        # get categories of the first publisher in list
+        # get categories of thn e first publisher in list
         category_list = data["publisher"][0]['category']
 
     # get dateset
@@ -241,11 +254,21 @@ def get_top_keyword():
     content_list = list(current_articles["content"])
     keyword_list = extract_keyword_of_corpus(content_list)
     current_articles["keyword"]=keyword_list
+    keyword_corpus_articles = statistic_keywords(current_articles["keyword"])
+    # print(keyword_in_articles) 
     # print(current_articles[0])
     current_articles = current_articles.groupby(["category_id"])
     # category_list = current_articles['category_id'].unique()
     # print(category_list)
     for cat in category_list:
-        keyword_api[str(cat)]=list(current_articles.get_group(cat)['keyword'])
+        list_keywords = list(current_articles.get_group(cat)['keyword'])
+        keyword_in_cat = statistic_keywords(list_keywords)
+        cat_keyword_articles={}
+        for key, value in keyword_in_cat.items():
+            cat_keyword_articles[key]=keyword_corpus_articles.get(key)
+        keyword_api[str(cat)] = cat_keyword_articles
+        
+       
+        
     
     return keyword_api
