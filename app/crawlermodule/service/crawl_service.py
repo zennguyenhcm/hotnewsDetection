@@ -62,7 +62,7 @@ def crawl_article_from_url(article_url, category_id, publisher_id):
     url = article_url
     category_id = category_id
     publisher_id = publisher_id
-    crawlDate = date.today().strftime("%d-%m-%Y  %H:%M:%S")
+    crawlDate = datetime.now().strftime("%d-%m-%Y  %H:%M:%S")
     #print(crawlDate)
 
     html = requests.get(article_url)
@@ -145,7 +145,7 @@ def set_article_detail(article_id, article_url):
         + article_url.split("/")[3]
         + "&layout=button_count&locale=vi_VN&sdk=joey&share=false&show_faces=false&size=small",
         "likeRate": parse_likeRate_from_string(article_url),
-        "updateTime":date.today().strftime("%d-%m-%Y %H:%M:%S")
+        "updateTime":datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     }
 
     return new_article_detail 
@@ -156,7 +156,7 @@ def update_article_detail(crawlDate, article_id, like_url):
         "article_id": article_id,
         "like_url": like_url,
         "likeRate": get_likeRate_from_url(like_url),
-        "updateTime":crawlDate.strftime("%d-%m-%Y %H:%M:%S")
+        "updateTime":datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     }
 
     return new_article_detail 
@@ -284,20 +284,26 @@ def update_likeRate():
         #only update lastest details which is imported in 28 days ago
         indate_details = details[date.today() <= details['updateTime'].apply(convert_string_to_date_full) + timedelta(days=28)]
         print(indate_details)
-        latest_update_date = details['updateTime'].apply(convert_string_to_date_full).max().strftime("%d-%m-%Y %H:%M:%S")
+        latest_update_date = details['updateTime'].apply(convert_string_to_date_full).max()
         print(latest_update_date)
         # lastest data
-        lastest_details = details[details['updateTime']==latest_update_date]
+        lastest_details = details[details['updateTime'].apply(convert_string_to_date_full)==latest_update_date]
+
+        
         # non lastest data
         non_lastest_details = details[details['updateTime']!=latest_update_date]
         #drop lastest data and store to file
-        details.drop(details[details['updateTime'] == latest_update_date].index, inplace=True)
+        details.drop_(details[details['updateTime'].apply(convert_string_to_date_full) == latest_update_date].index, inplace=True)
         with open(filePath, mode='w',encoding="utf-8") as f:
             details.to_csv(f, index=False)
         # update
         new_updates=pd.Series(details['like_url'].apply(get_likeRate_from_url), name='likeRate')
         lastest_details.update(new_updates)
-        print(lastest_details)
+        # print("before_drop")
+        # print(len(lastest_details))
+        # lastest_details.drop_duplicates(subset='articleDetail_id',keep="first", inplace=True)
+        # print("after_drop")
+        # print(len(lastest_details))
         # add new update to file
         with open(filePath, mode='a',encoding="utf-8") as f:
             lastest_details.to_csv(f, index=False, header=False)
@@ -328,6 +334,7 @@ def crawl_all_articles(publisher_id):
     print("Start crawling ...")
     # get list of categories
     category_list = get_all_categories(publisher_id)
+
     #initalize some stuffs
     cat_dict_api={}
     articles_crawled_list=[]
