@@ -15,7 +15,8 @@ import os.path
 import sys
 import json
 import pandas as pd
-from datetime import date
+from datetime import date, timedelta, datetime
+import datetime as dt
 # đọc dữ liệu ở folder.
 stopword_path = os.path.join(sys.path[0], 'app\keywordExtrationModule\service\stopwords.txt')
 evaluation_path = os.path.join(sys.path[0], 'app\keywordExtrationModule\service\content_tags.csv')
@@ -187,6 +188,7 @@ def compare_gold_exact(detected_keywords, gold_standard_keywords,keyword_separat
 # 	print(precision, recall, F1)
 
 article_datasetPath =os.path.join(sys.path[0], 'app/crawlermodule/service/articles_dataset.csv')
+detail_datasetPath =os.path.join(sys.path[0],'app/crawlermodule/service/article_details.csv')
 
 def get_all_categories(publisher_id):
     #print(sys.path[0])
@@ -213,15 +215,44 @@ def statistic_keywords(list_of_keywords):
     for index,item in enumerate(list_of_keywords):
         array = item.split(";")
         for a in array:
-            if a not in dict_result.keys():
-                dict_result[a] = str(index)
-            else:
-                dict_result[a] = dict_result[a] + "_" + str(index)
+            if a =="":
+                continue
+            else:    
+                if a not in dict_result.keys():
+                    dict_result[a] = str(index)
+                else:
+                    dict_result[a] = dict_result[a] + "_" + str(index)
     for key,value in dict_result.items():
         dict_result[key] = value.split("_")
     return dict_result
 
+def get_statistic_keywords(article_df):
+    dict_result = {}
+    for index,item in enumerate(list(article_df['keyword'])):
+        array = item.split(";")
+        for word in array:
+            if word =="":
+                continue
+            else:    
+                if word not in dict_result.keys():
+                    _value = article_df.iloc[index]
+                    str_value = ','.join(map(str,_value))
+                    dict_result[word] = str_value
+                    # dict_result[word] = str(index)
+                else:
+                     _value = article_df.iloc[index]
+                     str_value = ','.join(map(str,_value))
+                     dict_result[word]=dict_result[word]+"_"+str_value
+                    # dict_result[word] = dict_result[a] + "_" + str(index)
+    for key,value in dict_result.items():
+        dict_result[key] = value.split("_")
+    return dict_result
+
+def convert_string_to_date_full(_str):
+    return dt.datetime.strptime(_str,"%d-%m-%Y %H:%M:%S").date()
+
 def get_top_keyword():
+    print("Analyzing ...")
     with open(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'),  encoding="utf8") as jsonFile:
         data = json.load(jsonFile)
         # get categories of thn e first publisher in list
@@ -229,9 +260,29 @@ def get_top_keyword():
 
     # get dateset
     article_df = pd.read_csv(article_datasetPath)
+    detail_df = pd.read_csv(detail_datasetPath)
+    #get lastest date
+    lastest_update_date = detail_df['updateTime'].apply(convert_string_to_date_full).max()
+
+    #get lastest details date
+    lastest_details = detail_df[detail_df['updateTime'].apply(convert_string_to_date_full) == lastest_update_date]
+
+    #standardize like rates data
+    _likeRate = pd.Series(lastest_details['likeRate'].replace({'K': '*1000', ',':'.'}, regex=True).map(pd.eval),dtype=int)
+    # delete old likeRate col
+    lastest_details.drop(columns=['likeRate'],inplace=True)
+    #update standardized likeRate col
+    lastest_details['likeRate']=_likeRate
+    #sort likeRate descending and drop duplicated values
+    lastest_details = lastest_details.sort_values('likeRate', ascending=False).drop_duplicates(['article_id'])
+    # merge details table with articles table to create new dataset 
+    new_dataset = article_df.merge(lastest_details[['article_id', 'likeRate', 'updateTime']], left_on='id', right_on='article_id', how='inner')[['id', 'content','likeRate','updateTime','category_id', 'title', 'url']]
+    # sort new dataset by likeRate descending
+    ranking_df = new_dataset.sort_values('likeRate',ascending=False)
     # print(article_df)
     # get current articles
-    current_articles = article_df.head(100)
+    # current_articles = article_df.head(100)
+    current_articles = ranking_df
     category_list = current_articles['category_id'].unique()
     print("cate", category_list)
     # current_articles = current_articles.groupby('category_id')    
@@ -254,15 +305,18 @@ def get_top_keyword():
     content_list = list(current_articles["content"])
     keyword_list = extract_keyword_of_corpus(content_list)
     current_articles["keyword"]=keyword_list
-    keyword_corpus_articles = statistic_keywords(current_articles["keyword"])
+    # keyword_corpus_articles = statistic_keywords(current_articles["keyword"])
+    keyword_corpus_articles = get_statistic_keywords(current_articles)
     # print(keyword_in_articles) 
     # print(current_articles[0])
     current_articles = current_articles.groupby(["category_id"])
     # category_list = current_articles['category_id'].unique()
     # print(category_list)
     for cat in category_list:
-        list_keywords = list(current_articles.get_group(cat)['keyword'])
-        keyword_in_cat = statistic_keywords(list_keywords)
+        # list_keywords = list(current_articles.get_group(cat)['keyword'])
+        _df = current_articles.get_group(cat)
+        # keyword_in_cat = statistic_keywords(list_keywords)
+        keyword_in_cat = get_statistic_keywords(_df)
         cat_keyword_articles={}
         for key, value in keyword_in_cat.items():
             cat_keyword_articles[key]=keyword_corpus_articles.get(key)
@@ -272,3 +326,10 @@ def get_top_keyword():
         
     
     return keyword_api
+
+def extract_keyword_from_url(url):
+    return list_keywords
+
+def extract_keyword_from_paragraph(paragraph):
+    extract_keyword_of_corpus(list(paragraph))
+    return list_keywords

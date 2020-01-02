@@ -10,6 +10,7 @@ hotKeywordAnalyzer_page = Blueprint("hotKeywordAnalyzer_page", __name__, templat
 @hotKeywordAnalyzer_page.route("/hotKeywordAnalyzer", methods=["POST", "GET"])
 def getKeywordsList():
     response = tf_idf_extractor.get_top_keyword()
+    print("Analyzing done!")
     return jsonify(response)    
 
 
