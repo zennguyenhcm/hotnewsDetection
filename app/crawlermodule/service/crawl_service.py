@@ -293,7 +293,7 @@ def update_likeRate():
         # non lastest data
         non_lastest_details = details[details['updateTime']!=latest_update_date]
         #drop lastest data and store to file
-        details.drop_(details[details['updateTime'].apply(convert_string_to_date_full) == latest_update_date].index, inplace=True)
+        details.drop_duplicates(details[details['updateTime'].apply(convert_string_to_date_full) == latest_update_date].index, inplace=True)
         with open(filePath, mode='w',encoding="utf-8") as f:
             details.to_csv(f, index=False)
         # update
@@ -320,6 +320,7 @@ def update_likeRate():
             write_to_csv(filePath, updated_details_list, 'a')
     except Exception as e:
         print("update_likeRate:",e)
+        raise(e)
     finally:
         return
 
