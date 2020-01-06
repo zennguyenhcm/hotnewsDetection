@@ -283,21 +283,27 @@ def update_likeRate():
         details= pd.read_csv(filePath)
         #only update lastest details which is imported in 28 days ago
         indate_details = details[date.today() <= details['updateTime'].apply(convert_string_to_date_full) + timedelta(days=28)]
-        print(indate_details)
+        print('indate',indate_details)
+        
         latest_update_date = details['updateTime'].apply(convert_string_to_date_full).max()
         print(latest_update_date)
         # lastest data
-        lastest_details = details[details['updateTime'].apply(convert_string_to_date_full)==latest_update_date]
+        lastest_details = indate_details[indate_details['updateTime'].apply(convert_string_to_date_full)==latest_update_date]
+        print('lastest', lastest_details)
 
-        
         # non lastest data
-        non_lastest_details = details[details['updateTime']!=latest_update_date]
+        # non_lastest_details = details[details['updateTime']!=latest_update_date]
+        non_lastest_details = indate_details.drop(lastest_details.index)
+        print('non_lastest_details',non_lastest_details)
         #drop lastest data and store to file
-        details.drop_duplicates(details[details['updateTime'].apply(convert_string_to_date_full) == latest_update_date].index, inplace=True)
+        drop_df = details[details['updateTime'].apply(convert_string_to_date_full) == latest_update_date]
+        print('drop_df', drop_df)
+        # details.drop_duplicates(details[details['updateTime'].apply(convert_string_to_date_full) == latest_update_date].index, inplace=True)
+        details.drop(indate_details.index)
         with open(filePath, mode='w',encoding="utf-8") as f:
             details.to_csv(f, index=False)
         # update
-        new_updates=pd.Series(details['like_url'].apply(get_likeRate_from_url), name='likeRate')
+        new_updates=pd.Series(latest_details['like_url'].apply(get_likeRate_from_url), name='likeRate')
         lastest_details.update(new_updates)
         # print("before_drop")
         # print(len(lastest_details))
@@ -316,6 +322,7 @@ def update_likeRate():
             for index, row in non_lastest_details.iterrows():
                 new_detail = update_article_detail(date.today(),row['article_id'],row['like_url'])
                 updated_details_list.append(new_detail)
+            print('updated_details_list', updated_details_list)
             #store updated list to file
             write_to_csv(filePath, updated_details_list, 'a')
     except Exception as e:
