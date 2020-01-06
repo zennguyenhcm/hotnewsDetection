@@ -303,6 +303,9 @@ def get_top_keyword():
     #     keyword_api[str(cate)]=keyword_in_cate
 
     content_list = list(current_articles["content"])
+    for index, doc in enumerate(content_list):
+        print(type(doc))
+        print(index)
     keyword_list = extract_keyword_of_corpus(content_list)
     current_articles["keyword"]=keyword_list
     # keyword_corpus_articles = statistic_keywords(current_articles["keyword"])
