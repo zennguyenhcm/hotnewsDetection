@@ -152,7 +152,7 @@ def set_article_detail(article_id, article_url):
 
 def update_article_detail(crawlDate, article_id, like_url):
     new_article_detail = {
-        "articleDetail_id": (crawlDate.strftime("%Y%m%d")+str(article_id)),
+        "articleDetail_id": (date.today().strftime("%Y%m%d")+str(article_id)),
         "article_id": article_id,
         "like_url": like_url,
         "likeRate": get_likeRate_from_url(like_url),
@@ -276,6 +276,7 @@ def write_to_csv(filePath, data, _mode):
     finally:
         return
 
+
 def update_likeRate():
     print("hello update likeRate")
     try:
@@ -293,18 +294,24 @@ def update_likeRate():
 
         # non lastest data
         # non_lastest_details = details[details['updateTime']!=latest_update_date]
-        non_lastest_details = indate_details.drop(lastest_details.index)
+        non_lastest_details = indate_details.drop(o9.index)
         print('non_lastest_details',non_lastest_details)
         #drop lastest data and store to file
         drop_df = details[details['updateTime'].apply(convert_string_to_date_full) == latest_update_date]
         print('drop_df', drop_df)
         # details.drop_duplicates(details[details['updateTime'].apply(convert_string_to_date_full) == latest_update_date].index, inplace=True)
         details.drop(indate_details.index)
-        with open(filePath, mode='w',encoding="utf-8") as f:
+        with open(filePath, mode='a',encoding="utf-8") as f:
             details.to_csv(f, index=False)
         # update
-        new_updates=pd.Series(latest_details['like_url'].apply(get_likeRate_from_url), name='likeRate')
-        lastest_details.update(new_updates)
+        new_updateLikeRate=pd.Series(latest_details['like_url'].apply(get_likeRate_from_url), name='likeRate')
+        lastest_details.update(new_updateLikeRate)
+
+        #update date
+        new_date = pd.Series([datetime.now().strftime("%d-%m-%Y %H:%M:%S")]*len(lastest_details))
+        lastest_details['updateTime']=new_date 
+
+      
         # print("before_drop")
         # print(len(lastest_details))
         # lastest_details.drop_duplicates(subset='articleDetail_id',keep="first", inplace=True)
@@ -312,6 +319,7 @@ def update_likeRate():
         # print(len(lastest_details))
         # add new update to file
         with open(filePath, mode='a',encoding="utf-8") as f:
+            print('update_lastest')
             lastest_details.to_csv(f, index=False, header=False)
         
         if (non_lastest_details.empty):
