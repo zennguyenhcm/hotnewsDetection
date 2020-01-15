@@ -30,12 +30,13 @@ class CrawlButton extends React.Component {
         // console.log ('Request failed', error);
         alert (error);
       });
+    // return ['AC', 'SD', 'SD'];
   };
   render () {
     return (
       <button
         type="button"
-        class="btn btn-primary"
+        className="btn btn-primary"
         onClick={() => {
           this.crawlData ();
         }}

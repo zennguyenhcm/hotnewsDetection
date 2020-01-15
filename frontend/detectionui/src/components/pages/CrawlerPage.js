@@ -10,6 +10,7 @@ import {
   MDBTable,
 } from 'mdbreact';
 import CrawlButton from './sections/CrawlButton';
+import fake_data from '../../data.json';
 
 class CrawlerPage extends React.Component {
   constructor (props) {
@@ -20,7 +21,7 @@ class CrawlerPage extends React.Component {
   }
 
   getDataFromChild = childData => {
-    // console.log ('getdatafromchild', childData);
+    console.log ('getdatafromchild', childData);
     this.setState ({
       data: childData,
     });
@@ -34,15 +35,27 @@ class CrawlerPage extends React.Component {
     for (let key in data) {
       articles.push (data[key]);
     }
+    console.log ('articles:', articles);
     return articles;
   };
 
-  getArticles = articles => {
-    console.log ('getArticle');
-    articles.map (article => <p>{article}</p>);
+  getArticles = list_article_arr => {
+    // console.log ('getArticle');
+    return list_article_arr.map (article_arr => {
+      return article_arr.map (article => <p>{article['title']}</p>);
+    });
   };
 
   render () {
+    // const item = ['AC', 'SD', 'SD'];
+    // const item = Object.values (this.state.data);
+    // console.log (item);
+    // const item = Object.values (this.state.data);
+    // this.setState ({
+    //   data: Object.values (Data),
+    // });
+    // const item = Data;
+    // console.log ('item: ', item);
     return (
       <React.Fragment>
         <MDBRow>
@@ -95,7 +108,8 @@ class CrawlerPage extends React.Component {
           {/* <p>{this.state.data}</p> */}
           <MDBCard>
             <MDBCardBody>
-              {this.getArticles (this.getCat (this.data))}
+              {/* {this.getArticles (this.getCat (this.state.data))} */}
+              {this.getArticles (this.getCat (fake_data))}
             </MDBCardBody>
           </MDBCard>
         </MDBRow>
