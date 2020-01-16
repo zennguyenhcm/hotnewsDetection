@@ -1,12 +1,6 @@
 import * as React from 'react';
+import styles from '../styles.module.css';
 
-export default function Cell({content, header}) {
-  const cellMarkup = header
-    ? <th className="Cell Cell-header">
-        {content}
-      </th>
-    : <td className="Cell">
-        {content}
-      </td>;
-  return cellMarkup;
+export default function Cell({content}) {
+  return <td>{content}</td>;
 }

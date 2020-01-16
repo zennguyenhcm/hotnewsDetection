@@ -11,6 +11,8 @@ import {
 } from 'mdbreact';
 import CrawlButton from './sections/CrawlButton';
 import fake_data from '../../data.json';
+import styles from './styles.module.css';
+import DataTable from './sections/DataTable';
 
 class CrawlerPage extends React.Component {
   constructor (props) {
@@ -24,26 +26,42 @@ class CrawlerPage extends React.Component {
     console.log ('getdatafromchild', childData);
     this.setState ({
       data: childData,
+      categories: Object.keys (childData),
+      headers: Object.keys (Object.values (Object.values (fake_data)[0])[0]),
     });
     // console.log ('getDataFromChild');
-    console.log ('getdatafromchild', this.state.data);
   };
 
   getCat = data => {
-    console.log ('get_cat:', data);
+    // console.log ('get_cat:', data);
     let articles = [];
     for (let key in data) {
-      articles.push (data[key]);
+      articles.push (...data[key]);
     }
     console.log ('articles:', articles);
     return articles;
   };
+  get_cell = (key, value) => {
+    console.log (key, value);
+    return <td className={styles.truncate}>hello</td>;
+  };
+  get_row = article => {
+    for (let [key, value] of Object.entries (article)) {
+      // console.log ('key:value', key, value);
+      this.get_cell (key, value);
+    }
+  };
 
-  getArticles = list_article_arr => {
+  getArticles = articles => {
     // console.log ('getArticle');
-    return list_article_arr.map (article_arr => {
-      return article_arr.map (article => <p>{article['title']}</p>);
+    articles.map (article => {
+      // return <tr>{this.get_row (article)}</tr>;
+      return <tr>hello</tr>;
     });
+  };
+
+  get_col = list_col => {
+    return list_col.map (col => <th>{col}</th>);
   };
 
   render () {
@@ -56,6 +74,42 @@ class CrawlerPage extends React.Component {
     // });
     // const item = Data;
     // console.log ('item: ', item);
+    // const fake_data = {
+    //   cat1: [
+    //     {
+    //       id: 1,
+    //       name: 'name1',
+    //     },
+    //     {
+    //       id: 2,
+    //       name: 'name2',
+    //     },
+    //   ],
+    //   cat2: [
+    //     {
+    //       id: 3,
+    //       name: 'name1',
+    //     },
+    //     {
+    //       id: 4,
+    //       name: 'name2',
+    //     },
+    //   ],
+    // };
+    // const categories = Object.keys (fake_data);
+    // const headings = Object.keys (
+    //   Object.values (Object.values (fake_data)[0])[0]
+    // );
+
+    // console.log ('data', fake_data);
+    // console.log ('categories', Object.keys (fake_data));
+    // console.log (
+    //   'headers',
+    //   Object.keys (Object.values (Object.values (fake_data)[0])[0])
+    // );
+    // console.log ('test', Object.values (Object.values (fake_data)));
+    const headers = [];
+    const data = {};
     return (
       <React.Fragment>
         <MDBRow>
@@ -72,31 +126,16 @@ class CrawlerPage extends React.Component {
                 <p>
                   Use prop striped to add zebra-striping to any table row within the table body
                 </p>
-                {/* <MDBTable striped>
+                <MDBTable striped responsive>
                   <MDBTableHead>
-                    <tr />
+                    <tr>
+                      {/* {this.get_col (this.state.header)} */}
+                    </tr>
                   </MDBTableHead>
                   <MDBTableBody>
-                    <tr>
-                      <td>1</td>
-                      <td>Mark</td>
-                      <td>Otto</td>
-                      <td>@mdo</td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>Jacob</td>
-                      <td>Thornton</td>
-                      <td>@fat</td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>Larry</td>
-                      <td>the Bird</td>
-                      <td>@twitter</td>
-                    </tr>
+                    {/* {this.getArticles (this.getCat (this.state.data))} */}
                   </MDBTableBody>
-                </MDBTable> */}
+                </MDBTable>
 
               </MDBCardBody>
 
@@ -109,7 +148,10 @@ class CrawlerPage extends React.Component {
           <MDBCard>
             <MDBCardBody>
               {/* {this.getArticles (this.getCat (this.state.data))} */}
-              {this.getArticles (this.getCat (fake_data))}
+              <DataTable
+                headings={this.state.headers}
+                rows={this.getCat (this.state.data)}
+              />
             </MDBCardBody>
           </MDBCard>
         </MDBRow>
