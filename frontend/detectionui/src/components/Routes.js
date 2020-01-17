@@ -4,12 +4,12 @@ import CrawlerPage from './pages/CrawlerPage';
 import ExtractorPage from './pages/ExtractorPage';
 import HotKeywordPage from './pages/HotKeywordPage';
 import InsightPage from './pages/InsightPage';
-
+import FirstPage from './pages/FirstPage';
 class Routes extends React.Component {
   render () {
     return (
       <Switch>
-        <Route path="/" exact component={CrawlerPage} />
+        <Route path="/" exact component={FirstPage} />
         <Route path="/crawler" exact component={CrawlerPage} />
         <Route path="/extractor" component={ExtractorPage} />
         <Route path="/hotkeyword" component={HotKeywordPage} />
