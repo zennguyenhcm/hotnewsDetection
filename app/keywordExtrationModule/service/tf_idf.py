@@ -70,8 +70,13 @@ def deleteIcon(text):
   
 
 def clean_doc(doc,vi_stopwords):
+    # print(type(doc))
+    # if(type(doc)==str):
+    #     print("floatdoc",doc)
+    #     doc=str(doc)
+    #     print("typedoc",type(doc))
     for punc in string.punctuation:
-        doc = doc.replace(punc,' '+ punc + ' ')
+        doc = str(doc).replace(punc,' '+ punc + ' ')
     doc = normalText(doc)
     doc = deleteIcon(doc)
     doc = tokenizer(doc)
@@ -84,8 +89,10 @@ def clean_doc(doc,vi_stopwords):
     doc = re.sub(r"[0-9]+", " num ", doc)
     # Split in tokens
     # Remove punctuation
+    
     for punc in string.punctuation:
       if punc not in "_":
+          
           doc = doc.replace(punc,' ')
     doc = re.sub('\\s+',' ',doc)
     return doc
@@ -306,6 +313,7 @@ def get_top_keyword():
     for index, doc in enumerate(content_list):
         print(type(doc))
         print(index)
+        # print(doc)
     keyword_list = extract_keyword_of_corpus(content_list)
     current_articles["keyword"]=keyword_list
     # keyword_corpus_articles = statistic_keywords(current_articles["keyword"])

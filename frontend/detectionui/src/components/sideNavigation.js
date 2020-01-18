@@ -1,5 +1,5 @@
 import React from 'react';
-import {MDBListGroup, MDBListGroupItem, MDBIcon} from 'mdbreact';
+import {MDBListGroup, MDBListGroupItem, MDBIcon, MDBBtn} from 'mdbreact';
 import {NavLink} from 'react-router-dom';
 import {BrowserRouter as Router} from 'react-router-dom';
 
@@ -14,50 +14,55 @@ const SideNavigation = () => {
       </a>
       <Router>
         <MDBListGroup className="list-group-flush">
-          <button onClick={refreshPage}>
+          <MDBBtn onClick={refreshPage}>
             <NavLink exact={true} to="/">
-              <MDBListGroupItem>
+              <div>
                 <MDBIcon icon="home" className="mr-3" />
                 FirstPage
-              </MDBListGroupItem>
-            </NavLink>
-          </button>
+              </div>
 
-          <button onClick={refreshPage}>
+            </NavLink>
+          </MDBBtn>
+
+          <MDBBtn onClick={refreshPage}>
+
             <NavLink to="/crawler" refresh="true">
-              <MDBListGroupItem>
+              <div>
                 <MDBIcon icon="table" className="mr-3" />
                 Crawler
-              </MDBListGroupItem>
+              </div>
             </NavLink>
-          </button>
+          </MDBBtn>
 
-          <button onClick={refreshPage}>
+          <MDBBtn onClick={refreshPage}>
             <NavLink to="/hotkeyword">
-              <MDBListGroupItem>
+
+              <div>
                 <MDBIcon icon="fire" className="mr-3" />
                 Hot Keywords Viewer
-              </MDBListGroupItem>
+              </div>
             </NavLink>
-          </button>
+          </MDBBtn>
 
-          <button onClick={refreshPage}>
+          <MDBBtn onClick={refreshPage}>
             <NavLink to="/insight">
-              <MDBListGroupItem>
+              <div>
                 <MDBIcon icon="chart-line" className="mr-3" />
                 Insights
-              </MDBListGroupItem>
-            </NavLink>
-          </button>
+              </div>
 
-          <button onClick={refreshPage}>
+            </NavLink>
+          </MDBBtn>
+
+          <MDBBtn onClick={refreshPage}>
             <NavLink to="/extractor">
-              <MDBListGroupItem>
+              <div>
                 <MDBIcon icon="eye" className="mr-3" />
                 Keywords Extractor
-              </MDBListGroupItem>
+              </div>
+
             </NavLink>
-          </button>
+          </MDBBtn>
 
         </MDBListGroup>
       </Router>

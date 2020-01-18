@@ -15,6 +15,6 @@ class ArticleDetail:
     ) -> None:
         self._id = _id
         self.article_id = article_id
-        self.likeRate = (0,)
+        self.likeRate = likeRate
         self.taking_datetime = taking_datetime
         self.likeUrl = likeUrl
