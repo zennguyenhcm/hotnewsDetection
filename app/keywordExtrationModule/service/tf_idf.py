@@ -17,6 +17,7 @@ import json
 import pandas as pd
 from datetime import date, timedelta, datetime
 import datetime as dt
+from collections import defaultdict 
 # đọc dữ liệu ở folder.
 stopword_path = os.path.join(sys.path[0], 'app\keywordExtrationModule\service\stopwords.txt')
 evaluation_path = os.path.join(sys.path[0], 'app\keywordExtrationModule\service\content_tags.csv')
@@ -258,6 +259,26 @@ def get_statistic_keywords(article_df):
 def convert_string_to_date_full(_str):
     return dt.datetime.strptime(_str,"%d-%m-%Y %H:%M:%S").date()
 
+def ranking_by_numbers_of_articles(dict_of_statictis_keywords):
+    # for key, value in dict_of_statictis_keywords.items():
+    #     # print("key", key)
+    #     # print("value", value)
+    #     # break
+    #     value = sorted(value, key=lamda) 
+    # ranking_keyword_follow_number_of_articles = sorted(dict_of_statictis_keywords.items(), key = lambda x: len(dict_of_statictis_keywords.values()), reverse=False)
+    # print(type(ranking_keyword_follow_number_of_articles))
+    # convert_to_ranking_dict =defaultdict(list)
+    # for key, value in ranking_keyword_follow_num(ber_of_articles:
+    #     convert_to_ranking_dict[key]=value
+    # return convert_to_ranking_dict
+     #return ranking_keyword_follow_number_of_articles
+
+    dict_article_arr_len = {key: len(value) for key, value in dict_of_statictis_keywords.items()}
+    import operator
+    sorted_key_list = sorted(dict_article_arr_len.items(), key=operator.itemgetter(1), reverse=True)
+    sorted_list =  [{item[0]:dict_of_statictis_keywords[item [0]]} for item in sorted_key_list]
+    return sorted_list
+   
 def get_top_keyword():
     print("Analyzing ...")
     with open(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'),  encoding="utf8") as jsonFile:
@@ -315,9 +336,20 @@ def get_top_keyword():
         print(index)
         # print(doc)
     keyword_list = extract_keyword_of_corpus(content_list)
+    
     current_articles["keyword"]=keyword_list
     # keyword_corpus_articles = statistic_keywords(current_articles["keyword"])
     keyword_corpus_articles = get_statistic_keywords(current_articles)
+    print("type of keyword_corpus_articles", type(keyword_corpus_articles))
+
+    # ranking_keyword_follow_number_of_articles = sorted(keyword_corpus_articles.items(), key = lambda x:len(keyword_corpus_articles.values()), reverse=True)
+    # print(type(ranking_keyword_follow_number_of_articles))
+    # convert_to_ranking_dict =defaultdict(list)
+    # for key, value in ranking_keyword_follow_number_of_articles:
+    #     convert_to_ranking_dict[key]=value
+
+    # print("ranking_list: ",ranking_keyword_follow_number_of_articles)
+    # print(keyword_corpus_articles)
     # print(keyword_in_articles) 
     # print(current_articles[0])
     current_articles = current_articles.groupby(["category_id"])
@@ -330,8 +362,9 @@ def get_top_keyword():
         keyword_in_cat = get_statistic_keywords(_df)
         cat_keyword_articles={}
         for key, value in keyword_in_cat.items():
+          
             cat_keyword_articles[key]=keyword_corpus_articles.get(key)
-        keyword_api[str(cat)] = cat_keyword_articles
+        keyword_api[str(cat)] = ranking_by_numbers_of_articles(cat_keyword_articles)
         
        
         
