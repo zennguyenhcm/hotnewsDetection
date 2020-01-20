@@ -9,7 +9,7 @@ class Routes extends React.Component {
   render () {
     return (
       <Switch>
-        <Route path="/" exact component={FirstPage} />
+        <Route path="/" exact component={FirstPage}/>
         <Route path="/crawler" exact component={CrawlerPage} />
         <Route path="/extractor" component={ExtractorPage} />
         <Route path="/hotkeyword" component={HotKeywordPage} />

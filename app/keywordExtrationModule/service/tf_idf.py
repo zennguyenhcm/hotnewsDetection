@@ -218,7 +218,7 @@ def get_all_categories(publisher_id):
     finally:
         pass
 
-def statistic_keywords(list_of_keywords):
+def statistic_keywords(list_of_keywords): 
     dict_result = {}
     for index,item in enumerate(list_of_keywords):
         array = item.split(";")
@@ -231,10 +231,13 @@ def statistic_keywords(list_of_keywords):
                 else:
                     dict_result[a] = dict_result[a] + "_" + str(index)
     for key,value in dict_result.items():
+        # print("key", key)
+        # print("value", value)
         dict_result[key] = value.split("_")
+    print(dict_result)
     return dict_result
 
-def get_statistic_keywords(article_df):
+def get_statistic_keywords(article_df): 
     dict_result = {}
     for index,item in enumerate(list(article_df['keyword'])):
         array = item.split(";")
@@ -244,16 +247,20 @@ def get_statistic_keywords(article_df):
             else:    
                 if word not in dict_result.keys():
                     _value = article_df.iloc[index]
+                    # print(_value)
+                    # for x in _value:
+                    #     print(str(x))
                     str_value = ','.join(map(str,_value))
                     dict_result[word] = str_value
+                    # print(str_value)
                     # dict_result[word] = str(index)
                 else:
-                     _value = article_df.iloc[index]
-                     str_value = ','.join(map(str,_value))
-                     dict_result[word]=dict_result[word]+"_"+str_value
+                    _value = article_df.iloc[index]
+                    str_value = ','.join(map(str,_value))
+                    dict_result[word]=dict_result[word]+"@@@"+str_value
                     # dict_result[word] = dict_result[a] + "_" + str(index)
     for key,value in dict_result.items():
-        dict_result[key] = value.split("_")
+        dict_result[key] = value.split("@@@")  
     return dict_result
 
 def convert_string_to_date_full(_str):
@@ -291,7 +298,7 @@ def get_top_keyword():
     detail_df = pd.read_csv(detail_datasetPath)
     #get lastest date
     lastest_update_date = detail_df['updateTime'].apply(convert_string_to_date_full).max()
-
+    print(lastest_update_date)
     #get lastest details date
     lastest_details = detail_df[detail_df['updateTime'].apply(convert_string_to_date_full) == lastest_update_date]
 
@@ -331,9 +338,9 @@ def get_top_keyword():
     #     keyword_api[str(cate)]=keyword_in_cate
 
     content_list = list(current_articles["content"])
-    for index, doc in enumerate(content_list):
-        print(type(doc))
-        print(index)
+    # for index, doc in enumerate(content_list):
+        # print(type(doc))
+        # print(index)
         # print(doc)
     keyword_list = extract_keyword_of_corpus(content_list)
     
@@ -352,14 +359,21 @@ def get_top_keyword():
     # print(keyword_corpus_articles)
     # print(keyword_in_articles) 
     # print(current_articles[0])
+    # print(current_articles)
+    print("FIX")
     current_articles = current_articles.groupby(["category_id"])
     # category_list = current_articles['category_id'].unique()
-    # print(category_list)
+
+    print(category_list)
+    print("----------------")
     for cat in category_list:
         # list_keywords = list(current_articles.get_group(cat)['keyword'])
         _df = current_articles.get_group(cat)
+        print(_df)
         # keyword_in_cat = statistic_keywords(list_keywords)
         keyword_in_cat = get_statistic_keywords(_df)
+        print("KW:")
+        print(keyword_in_cat)
         cat_keyword_articles={}
         for key, value in keyword_in_cat.items():
           
@@ -367,8 +381,6 @@ def get_top_keyword():
         keyword_api[str(cat)] = ranking_by_numbers_of_articles(cat_keyword_articles)
         
        
-        
-    
     return keyword_api
 
 def extract_keyword_from_url(url):

@@ -1,6 +1,5 @@
 import * as React from 'react';
-import CrawlerPage from '../CrawlerPage';
-import {findAllByAltText} from '@testing-library/react';
+
 
 class CrawlButton extends React.Component {
   // componentDidMount () {
