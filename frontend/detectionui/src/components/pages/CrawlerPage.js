@@ -13,6 +13,7 @@ import CrawlButton from './sections/CrawlButton';
 import fake_data from '../../data.json';
 import styles from './styles.module.css';
 import DataTable from './sections/DataTable';
+import {PropTypes} from 'react';
 
 class CrawlerPage extends React.Component {
   constructor (props) {
@@ -22,7 +23,15 @@ class CrawlerPage extends React.Component {
     };
   }
 
- 
+  getDataFromChild = childData => {
+    console.log ('getdatafromchild', childData);
+    this.setState ({
+      data: childData,
+      categories: Object.keys (childData),
+      headers: Object.keys (Object.values (Object.values (fake_data)[0])[0]),
+    });
+    // console.log ('getDataFromChild');
+  };
 
   getCat = data => {
     // console.log ('get_cat:', data);
