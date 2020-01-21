@@ -14,8 +14,11 @@ import {
 import KeywordCell from '../sections/KeywordCell';
 
 export default function HotKeywordTable({catName, kwData}) {
-  const data = kwData.map (item => (
-    <tr><KeywordCell content={Object.keys (item)} /></tr>
+  const size = kwData.lenght > 2 ? 2 : kwData.lenght;
+  const data = kwData.slice (0, size).map (item => (
+    <tr>
+      <KeywordCell content={Object.keys (item)} news={Object.values (item)} />
+    </tr>
   ));
   return (
     <MDBCard>
