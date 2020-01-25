@@ -20,17 +20,22 @@ class CrawlerPage extends React.Component {
     super (props);
     this.state = {
       data: {},
+      headers: [],
     };
   }
 
   getDataFromChild = childData => {
     console.log ('getdatafromchild', childData);
-    this.setState ({
-      data: childData,
-      categories: Object.keys (childData),
-      headers: Object.keys (Object.values (Object.values (fake_data)[0])[0]),
-    });
-    // console.log ('getDataFromChild');
+    this.setState (
+      {
+        data: childData,
+        categories: Object.keys (childData),
+        headers: Object.keys (Object.values (Object.values (childData)[0])[0]),
+      },
+      () => {
+        console.log ('header', this.state.headers);
+      }
+    );
   };
 
   getCat = data => {
@@ -153,6 +158,7 @@ class CrawlerPage extends React.Component {
                 headings={this.state.headers}
                 rows={this.getCat (this.state.data)}
               />
+              {console.log (this.state.headers)}
             </MDBCardBody>
           </MDBCard>
         </MDBRow>

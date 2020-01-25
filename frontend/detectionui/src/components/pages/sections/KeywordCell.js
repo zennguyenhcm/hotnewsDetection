@@ -12,6 +12,18 @@ import {MDBCollapse} from 'mdbreact';
 //   );
 // }
 
+const getArticleInfo = arr => {
+  return (
+    <div>
+      {console.log (arr)}
+      <p>Category: {arr[4]}</p>
+      <p>Title: {arr[5]}</p>
+      <p>Link: {arr[6]}</p>
+      <p>Like rates: {arr[2]}</p>
+      <p>Keywords: {arr[7]}</p>
+    </div>
+  );
+};
 export default function KeywordCell({content, news}) {
   const [collapseID, setCollapseID] = useState ('');
   const toggleCollapse = collapseID => {
@@ -30,10 +42,19 @@ export default function KeywordCell({content, news}) {
         <i class="fas fa-cat" onClick={() => toggleCollapse (collapseID)} />
       </td>
       <MDBCollapse id="basicCollapse" isOpen={collapseID}>
-        <p>
+        <div>
           {console.log ('render_collapse')}
-          {news}
-        </p>
+          {console.log (news)}
+          {news.map (item => (
+            <div>
+              bài:
+              <p>
+                {console.log ('item', Object.values (item))}
+                {Object.values (item)}
+              </p>
+            </div>
+          ))}
+        </div>
       </MDBCollapse>
     </div>
   );
