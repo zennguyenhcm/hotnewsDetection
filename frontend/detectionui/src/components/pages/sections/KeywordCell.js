@@ -12,7 +12,9 @@ import {MDBCollapse} from 'mdbreact';
 //   );
 // }
 
-const getArticleInfo = arr => {
+const getArticleInfo = str => {
+  console.log ('string', str);
+  let arr = str.toString ().split ('~~~');
   return (
     <div>
       {console.log (arr)}
@@ -45,13 +47,13 @@ export default function KeywordCell({content, news}) {
         <div>
           {console.log ('render_collapse')}
           {console.log (news)}
-          {news.map (item => (
+          {news.map (items => (
             <div>
               bài:
-              <p>
-                {console.log ('item', Object.values (item))}
-                {Object.values (item)}
-              </p>
+              <div>
+                {console.log ('item', Object.values (items))}
+                {Object.values (items).map (item => getArticleInfo (item))}
+              </div>
             </div>
           ))}
         </div>
