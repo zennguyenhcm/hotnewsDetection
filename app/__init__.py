@@ -9,6 +9,7 @@ from flask import Flask, render_template
 from .crawlermodule.model.entity.Article import Article
 from .crawlermodule.model.entity.Category import Category
 from .crawlermodule.model.entity.Publisher import Publisher
+from .tatfidfModule.tatfidfAPI import tatfidf_page
 
 
 # Define the WSGI application object
@@ -34,6 +35,7 @@ def not_found(error):
 app.register_blueprint(simple_page)
 app.register_blueprint(crawler_page)
 app.register_blueprint(hotKeywordAnalyzer_page)
+app.register_blueprint(tatfidf_page)
 # Build the database:
 # This will create the database file using SQLAlchemy
 # db.drop_all()

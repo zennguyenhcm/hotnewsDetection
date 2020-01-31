@@ -20,9 +20,10 @@ const getArticleInfo = str => {
       {console.log (arr)}
       <p>Category: {arr[4]}</p>
       <p>Title: {arr[5]}</p>
-      <p>Link: {arr[6]}</p>
+      <a href={arr[6]}>Link: {arr[6]}</a>
       <p>Like rates: {arr[2]}</p>
       <p>Keywords: {arr[7]}</p>
+      <hr />
     </div>
   );
 };

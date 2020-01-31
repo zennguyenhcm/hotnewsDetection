@@ -250,13 +250,13 @@ def get_statistic_keywords(article_df):
                     # print(_value)
                     # for x in _value:
                     #     print(str(x))
-                    str_value = ','.join(map(str,_value))
+                    str_value = '~~~'.join(map(str,_value))
                     dict_result[word] = str_value
                     # print(str_value)
                     # dict_result[word] = str(index)
                 else:
                     _value = article_df.iloc[index]
-                    str_value = ','.join(map(str,_value))
+                    str_value = '~~~'.join(map(str,_value))
                     dict_result[word]=dict_result[word]+"@@@"+str_value
                     # dict_result[word] = dict_result[a] + "_" + str(index)
     for key,value in dict_result.items():

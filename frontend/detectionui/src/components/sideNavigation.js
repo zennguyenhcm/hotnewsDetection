@@ -48,7 +48,7 @@ const SideNavigation = () => {
             <NavLink to="/insight">
               <div>
                 <MDBIcon icon="chart-line" className="mr-3" />
-                Insights
+                TA TFIDF{' '}
               </div>
 
             </NavLink>

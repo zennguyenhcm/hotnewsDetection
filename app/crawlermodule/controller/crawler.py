@@ -8,7 +8,7 @@ crawler_page = Blueprint("crawler_page", __name__, template_folder="templates")
 @crawler_page.route("/crawler", methods=["POST", "GET"])
 def crawl_data():
     response = jsonify(crawlerService.crawl_all_articles(publisher_id="1"))
-    
+    response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
 
