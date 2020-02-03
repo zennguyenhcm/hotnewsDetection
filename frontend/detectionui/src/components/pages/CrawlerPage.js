@@ -29,21 +29,16 @@ class CrawlerPage extends React.Component {
 
   getDataFromChild = childData => {
     console.log ('getdatafromchild', childData);
-    this.setState (
-      {
-        data: childData,
-        categories: Object.keys (childData),
-        headers: [
-          'index',
-          ...Object.keys (Object.values (Object.values (childData)[0])[0]),
-        ],
-        number_of_articles: this.getCat (childData).length,
-      },
-      () => {
-        console.log ('header', this.state.headers);
-        console.log ('number_of_articles', this.state.number_of_articles);
-      }
-    );
+    this.setState ({
+      data: childData,
+      categories: Object.keys (childData),
+      headers: [
+        'index',
+        ...Object.keys (Object.values (Object.values (childData)[0])[0]),
+      ],
+      number_of_articles: this.getCat (childData).length,
+      loading: false,
+    });
   };
 
   getCat = data => {

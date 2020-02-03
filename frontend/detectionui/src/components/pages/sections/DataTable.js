@@ -17,7 +17,7 @@ export default class DataTable extends React.Component {
     // const index = this.state.index;
     const array = Object.values (row);
     const new_row = [index, ...array];
-    console.log ('new_row', new_row);
+    // console.log ('new_row', new_row);
 
     return (
       <tr>
