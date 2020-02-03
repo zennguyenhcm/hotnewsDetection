@@ -9,9 +9,7 @@ const refreshPage = () => {
 const SideNavigation = () => {
   return (
     <div className="sidebar-fixed position-fixed">
-      <a href="#!" className="logo-wrapper waves-effect">
-        <p>Hello</p>
-      </a>
+      <a href="#!" className="logo-wrapper waves-effect" />
       <Router>
         <MDBListGroup className="list-group-flush">
           <MDBBtn onClick={refreshPage}>

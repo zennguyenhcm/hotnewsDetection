@@ -21,8 +21,11 @@ class CrawlerPage extends React.Component {
     this.state = {
       data: {},
       headers: [],
+      number_of_articles: 0,
     };
   }
+
+  getNumberOfArticles = dict => {};
 
   getDataFromChild = childData => {
     console.log ('getdatafromchild', childData);
@@ -30,10 +33,15 @@ class CrawlerPage extends React.Component {
       {
         data: childData,
         categories: Object.keys (childData),
-        headers: Object.keys (Object.values (Object.values (childData)[0])[0]),
+        headers: [
+          'index',
+          ...Object.keys (Object.values (Object.values (childData)[0])[0]),
+        ],
+        number_of_articles: this.getCat (childData).length,
       },
       () => {
         console.log ('header', this.state.headers);
+        console.log ('number_of_articles', this.state.number_of_articles);
       }
     );
   };
@@ -120,48 +128,33 @@ class CrawlerPage extends React.Component {
       <React.Fragment>
         <MDBRow>
           <MDBCol md="12">
+            <CrawlButton parentCallback={this.getDataFromChild} />
             <MDBCard className="mt-5">
               <MDBView className="gradient-card-header blue darken-2">
-                <h4 className="h4-responsive text-white">Basic tables</h4>
+                <h4 className="h4-responsive text-white">
+                  <strong>Articles List</strong>
+                </h4>
+                <h3>
+                  <strong>
+                    Number of articles:
+                    {this.state.number_of_articles}
+                  </strong>
+                </h3>
               </MDBView>
               <MDBCardBody>
 
-                <h3 className="mt-5 text-left">
-                  <strong>Striped rows.</strong>
-                </h3>
-                <p>
-                  Use prop striped to add zebra-striping to any table row within the table body
-                </p>
-                <MDBTable striped responsive>
-                  <MDBTableHead>
-                    <tr>
-                      {/* {this.get_col (this.state.header)} */}
-                    </tr>
-                  </MDBTableHead>
-                  <MDBTableBody>
-                    {/* {this.getArticles (this.getCat (this.state.data))} */}
-                  </MDBTableBody>
-                </MDBTable>
+                <DataTable
+                  headings={this.state.headers}
+                  rows={this.getCat (this.state.data)}
+                />
+                {console.log (this.state.headers)}
 
               </MDBCardBody>
 
             </MDBCard>
           </MDBCol>
         </MDBRow>
-        <MDBRow>
-          <CrawlButton parentCallback={this.getDataFromChild} />
-          {/* <p>{this.state.data}</p> */}
-          <MDBCard>
-            <MDBCardBody>
-              {/* {this.getArticles (this.getCat (this.state.data))} */}
-              <DataTable
-                headings={this.state.headers}
-                rows={this.getCat (this.state.data)}
-              />
-              {console.log (this.state.headers)}
-            </MDBCardBody>
-          </MDBCard>
-        </MDBRow>
+
       </React.Fragment>
     );
   }

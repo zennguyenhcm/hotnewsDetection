@@ -3,14 +3,26 @@ import Cell from './Cell';
 import {MDBTable, MDBTableHead, MDBTableBody} from 'mdbreact';
 
 export default class DataTable extends React.Component {
+  constructor (props) {
+    super (props);
+    this.state = {
+      index: 1,
+    };
+  }
   renderHeadingRow = item => {
     return <Cell content={item} header={true} />;
   };
 
-  renderRow = row => {
+  renderRow = (row, index) => {
+    // const index = this.state.index;
+    const array = Object.values (row);
+    const new_row = [index, ...array];
+    console.log ('new_row', new_row);
+
     return (
       <tr>
-        {Object.values (row).map (value => {
+
+        {new_row.map (value => {
           return <Cell content={value} />;
         })}
       </tr>
@@ -25,8 +37,12 @@ export default class DataTable extends React.Component {
         {headings.map (item => this.renderHeadingRow (item))}
       </tr>
     );
-    console.log ('headings_theadMarkup', headings);
-    const tbodyMarkup = rows.map (this.renderRow);
+    // this.renderRow = this.renderRow.bind(this)
+
+    const tbodyMarkup = rows.map ((item, index) => {
+      return this.renderRow (item, index);
+    });
+
     return (
       <MDBTable striped responsive>
         <MDBTableHead>
