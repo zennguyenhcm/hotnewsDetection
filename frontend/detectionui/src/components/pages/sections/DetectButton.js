@@ -11,11 +11,21 @@ class DetectButton extends React.Component {
   //     }
   //   );
   // }
+  constructor (props) {
+    super (props);
+    this.state = {
+      loading: '',
+    };
+  }
+  onClick = () => {
+    this.setState ({loading: true}, this.getData);
+  };
   getData = () => {
     fetch ('http://127.0.0.1:5050/hotKeywordAnalyzer', {mode: 'cors'})
       .then (response => {
         // Convert to JSON
         console.log (response);
+        this.setState ({loading: false});
         return response.json ();
       })
       .then (j => {
@@ -33,15 +43,23 @@ class DetectButton extends React.Component {
   };
   render () {
     return (
-      <button
-        type="button"
-        className="btn btn-primary"
-        onClick={() => {
-          this.getData ();
-        }}
-      >
-        Analyze
-      </button>
+      <div>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => {
+            this.onClick ();
+          }}
+        >
+          Analyze
+        </button>
+        {this.state.loading
+          ? <div className="spinner-border" role="status">
+              {console.log ('loading', this.state.loading)}
+              <span className="sr-only">Loading...</span>
+            </div>
+          : <div />}
+      </div>
     );
   }
 }

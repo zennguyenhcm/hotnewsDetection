@@ -44,7 +44,7 @@ class HotKeywordPage extends React.Component {
                 <HotKeywordTable catName={key} kwData={value} />
               ))}
             </div>
-          : <p>Loading...</p>}
+          : <div />}
         {/* {
           <div>
             {console.log (this.state.categories)}
