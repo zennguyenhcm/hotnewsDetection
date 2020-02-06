@@ -23,6 +23,7 @@ import re
 stopword_path = os.path.join(sys.path[0], 'app\keywordExtrationModule\service\stopwords.txt')
 evaluation_path = os.path.join(sys.path[0], 'app\keywordExtrationModule\service\content_tags.csv')
 word_cloud_path = os.path.join(sys.path[0],'app\keywordExtrationModule\service\word_cloud.json')
+wordcloud_dictionary_path = os.path.join(sys.path[0],'app\keywordExtrationModule\service\wordcloud_dictionary.json')
 
 f = open(stopword_path, "r",encoding='utf8')
 s = f.read()
@@ -342,7 +343,29 @@ def ranking_by_numbers_of_articles(dict_of_statictis_keywords):
     sorted_key_list = sorted(dict_article_arr_len.items(), key=operator.itemgetter(1), reverse=True)
     sorted_list =  [{item[0]:dict_of_statictis_keywords[item [0]]} for item in sorted_key_list]
     return sorted_list
-   
+
+def append_to_json_file(file_path, data):
+    try:
+        if os.path.isfile(file_path):
+            #file exist
+            with open(file_path, mode='ab+') as json_file:
+                json_file.seek(0,2) #go to the end of the file
+                if(json_file.tell()==0): # check if file is empty
+                    array=[]
+                    array.append(data)
+                    json_file.write(json.dumps(array, ensure_ascii=False).encode('utf-8'))
+                else:
+                    json_file.seek(-1,2) #move to the end of file
+                    json_file.truncate() #remove the last char
+                    json_file.write(','.encode('utf-8')) #write a seperator 
+                    json_file.write(json.dumps(data,ensure_ascii=False).encode('utf-8'))
+                    json_file.write(']'.encode('utf-8'))        
+    except Exception as e:
+        print("get_top_keyword() catches error: ", e)
+        raise e
+    finally:
+        return
+
 def get_top_keyword():
     print("Analyzing ...")
     with open(os.path.join(sys.path[0], 'app\crawlermodule\service\publisher.json'),  encoding="utf8") as jsonFile:
@@ -455,6 +478,8 @@ def get_top_keyword():
 def extract_keyword_from_url(url):
     return list_keywords
 
+    
+
 def extract_keyword_from_paragraph(paragraph):
     extract_keyword_of_corpus(list(paragraph))
     return list_keywords
@@ -495,18 +520,42 @@ def initialize_word_cloud_object(keyword, list_of_articles):
     return _result_object
 
 
-    
+def is_today_wordcloud_dict_stored():
+    with open(wordcloud_dictionary_path,'r', encoding='utf-8') as f:
+        print("hello")
+        data = json.load(f)
+        lastest_value = data[-1]
+        if str(date.today()) in lastest_value['date']:
+            #exist
+            print("wordcloud_dictionary_exist")
+            return True
+        else:
+            #not exist
+            print("wordcloud_dictionary_not_exist")
+            return False
+
 def generate_word_cloud_api():
     word_cloud_api={}
-    with open(word_cloud_path, "r", encoding="utf8") as json_file:
-        data=json.load(json_file)
-        data_api = data['result']
-    for category, word_list in data_api.items():
-        list_keyword_in_category=[]
-        for word_object in word_list:
-            for keyword, list_of_articles in word_object.items():
-                list_keyword_in_category.append(initialize_word_cloud_object(keyword, list_of_articles))
-                # print("likeRate", len(likeRates))
-                # print("tfidfValue", len(tfidfValue))
-        word_cloud_api[category]=list_keyword_in_category
+    if(is_today_wordcloud_dict_stored()):
+        with open(wordcloud_dictionary_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            lastest_value = data[-1]
+            word_cloud_api = lastest_value['result']   
+    else:
+        with open(word_cloud_path, "r", encoding="utf8") as json_file:
+            data=json.load(json_file)
+            data_api = data['result']
+        for category, word_list in data_api.items():
+            list_keyword_in_category=[]
+            for word_object in word_list:
+                for keyword, list_of_articles in word_object.items():
+                    list_keyword_in_category.append(initialize_word_cloud_object(keyword, list_of_articles))
+                    # print("likeRate", len(likeRates))
+                    # print("tfidfValue", len(tfidfValue))
+            word_cloud_api[category]=list_keyword_in_category
+        words_dict = {}
+        words_dict['date']=str(date.today())
+        words_dict['result']=word_cloud_api
+        # print(words_dict)
+        append_to_json_file(wordcloud_dictionary_path, words_dict)# write to file
     return word_cloud_api
