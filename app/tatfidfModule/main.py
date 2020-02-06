@@ -18,6 +18,7 @@ import pandas as pd
 #     main()
 
 def tatfidf_hotnewsAnalyze():
+    
     df = pd.read_csv('data.csv')
     c = tatfidf.Tatfidf(df)
     c.init(10)

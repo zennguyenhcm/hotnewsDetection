@@ -22,3 +22,10 @@ def getKeywordsList():
 @hotKeywordAnalyzer_page.route("/keywordExtractor", methods=["POST", "GET"])
 def fool1():
     return "Hello1"
+
+@hotKeywordAnalyzer_page.route("/wordCloud", methods=["POST", "GET"])
+def generate_keyword_cloud():
+    response = jsonify(tf_idf_extractor.generate_word_cloud_api())
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    print("Analyzing done!")
+    return response

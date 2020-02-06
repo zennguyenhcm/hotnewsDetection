@@ -22,7 +22,7 @@ export default function HotKeywordTable({catName, kwData}) {
   ));
   return (
     <MDBCard>
-      <MDBCardHeader>{catName}</MDBCardHeader>
+      <MDBCardHeader><strong>{catName}</strong></MDBCardHeader>
       <MDBCardBody>
         {data}
         {/* <Cell content="hello" /> */}

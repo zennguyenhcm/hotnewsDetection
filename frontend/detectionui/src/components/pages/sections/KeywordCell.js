@@ -27,6 +27,7 @@ const getArticleInfo = str => {
     </div>
   );
 };
+
 export default function KeywordCell({content, news}) {
   const [collapseID, setCollapseID] = useState ('');
   const toggleCollapse = collapseID => {
@@ -41,7 +42,8 @@ export default function KeywordCell({content, news}) {
   return (
     <div>
       <td>
-        {content}
+        {console.log ('type of content ', typeof Object.values (content))}
+        {Object.values (Object.values (content))}
         <i class="fas fa-cat" onClick={() => toggleCollapse (collapseID)} />
       </td>
       <MDBCollapse id="basicCollapse" isOpen={collapseID}>

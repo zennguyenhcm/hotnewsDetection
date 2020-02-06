@@ -18,9 +18,11 @@ import pandas as pd
 from datetime import date, timedelta, datetime
 import datetime as dt
 from collections import defaultdict 
+import re
 # đọc dữ liệu ở folder.
 stopword_path = os.path.join(sys.path[0], 'app\keywordExtrationModule\service\stopwords.txt')
 evaluation_path = os.path.join(sys.path[0], 'app\keywordExtrationModule\service\content_tags.csv')
+word_cloud_path = os.path.join(sys.path[0],'app\keywordExtrationModule\service\word_cloud.json')
 
 f = open(stopword_path, "r",encoding='utf8')
 s = f.read()
@@ -129,6 +131,7 @@ def calculate_of_corpus(docs):
 
 def extract_keyword_of_corpus(list_content):
     docs = []
+    list_of_keyword_and_value=[]
     for data in list_content:
         docs.append(clean_doc(data,vi_stopwords))
     list_predict_keyword = []
@@ -136,14 +139,43 @@ def extract_keyword_of_corpus(list_content):
     feature_names=cv.get_feature_names()
     for doc in docs:
         tf_idf_vector=tfidf_transformer.transform(cv.transform([doc]))
+        
         sorted_items= sort_keyword(tf_idf_vector.tocoo())
         keywords=extract_topn_from_vector(feature_names,sorted_items,5)
-        output = ""
+        list_of_keyword_and_value.append(keywords)
+        output = "" 
         for k in keywords:
             output += k + ';'
-        list_predict_keyword.append(output)
+        list_predict_keyword.append(output)    
     return list_predict_keyword
 
+def extract_keyword_of_corpus_return_keyword_and_value(list_content):
+    """
+    The function is a clone from the original extract_keyword_of_corpus with returning the different result is a pair of keyword and its tfidf value
+    """
+    docs = []
+    list_of_keyword_and_value=[]
+    for data in list_content:
+        docs.append(clean_doc(data,vi_stopwords))
+    list_predict_keyword = []
+    cv, tfidf_transformer = calculate_of_corpus(docs)
+    feature_names=cv.get_feature_names()
+    for doc in docs:
+        tf_idf_vector=tfidf_transformer.transform(cv.transform([doc]))
+        
+        sorted_items= sort_keyword(tf_idf_vector.tocoo())
+        keywords=extract_topn_from_vector(feature_names,sorted_items,5)
+        
+        output = "" 
+        for key in keywords:
+            # item = {}
+            # item[key]=str(keywords[key])
+            print("key", key)
+            item =(key,keywords.get(key))
+            output += str(item) + ';'
+        list_of_keyword_and_value.append(output)
+    print("list_of_keyword_and_value", list_of_keyword_and_value)
+    return list_of_keyword_and_value
 # Hàm tính so sánh các keywords được rút trích ra bởi phương pháp TF-IDF so các tags được gán nhãn
 def compare_gold_exact(detected_keywords, gold_standard_keywords,keyword_separator=';'):
     tp_fp_all = []
@@ -234,33 +266,58 @@ def statistic_keywords(list_of_keywords):
         # print("key", key)
         # print("value", value)
         dict_result[key] = value.split("_")
-    print(dict_result)
+    #print first 5 key:item from a dictionary
+    # print("Hello_from_statistic_keyword")
+    # first5pairs = {k: dict_result[k] for k in list(dict_result)[:5]}
+    # print(first5pairs)
     return dict_result
 
 def get_statistic_keywords(article_df): 
+    """
+    The function return a dictionary of keywords with a list of articles that mention it inside the content. 
+    """
     dict_result = {}
     for index,item in enumerate(list(article_df['keyword'])):
-        array = item.split(";")
-        for word in array:
-            if word =="":
+        list_of_sub_str = item.split(";")
+        for sub_str in list_of_sub_str:
+            if sub_str =='':
                 continue
-            else:    
+            else :
+                # json_acceptable_string = word.replace("'", "\"")
+                # print("string of dictionary: ", json.loads(json_acceptable_string))
+                # print("type of: ", type(json_acceptable_string))
+                print("split_result:", re.split(r"(\(|\)|,|\s)",sub_str))
+                print("split_result:", len(re.split(r"(\(|\)|,|\s)",sub_str)))
+                result_list = re.split(r"(\(|\)|,|\s)",sub_str)
+                print("type", type(result_list[2]), "value", result_list[2].replace("\'",""))
+                print("type", type(result_list[6]), "value", result_list[6])
+                word= result_list[2].replace("\'","")
+                tfidf_value = result_list[6] 
+                
+                   
                 if word not in dict_result.keys():
                     _value = article_df.iloc[index]
                     # print(_value)
                     # for x in _value:
                     #     print(str(x))
                     str_value = '~~~'.join(map(str,_value))
+                    # add "tfidf value" field in str_value
+                    str_value = str_value + '~~~'+ str(tfidf_value)
                     dict_result[word] = str_value
                     # print(str_value)
                     # dict_result[word] = str(index)
                 else:
                     _value = article_df.iloc[index]
                     str_value = '~~~'.join(map(str,_value))
+                    str_value = str_value + '~~~'+ str(tfidf_value)
                     dict_result[word]=dict_result[word]+"@@@"+str_value
                     # dict_result[word] = dict_result[a] + "_" + str(index)
     for key,value in dict_result.items():
-        dict_result[key] = value.split("@@@")  
+        dict_result[key] = value.split("@@@") 
+    #print first 5 key:item from a dictionary
+    # print("Hello_from_statistic_keyword")
+    # first5pairs = {k: dict_result[k] for k in list(dict_result)[:2]}
+    # print(first5pairs) 
     return dict_result
 
 def convert_string_to_date_full(_str):
@@ -298,7 +355,7 @@ def get_top_keyword():
     detail_df = pd.read_csv(detail_datasetPath)
     #get lastest date
     lastest_update_date = detail_df['updateTime'].apply(convert_string_to_date_full).max()
-    print(lastest_update_date)
+    #print(lastest_update_date)
     #get lastest details date
     lastest_details = detail_df[detail_df['updateTime'].apply(convert_string_to_date_full) == lastest_update_date]
 
@@ -342,12 +399,12 @@ def get_top_keyword():
         # print(type(doc))
         # print(index)
         # print(doc)
-    keyword_list = extract_keyword_of_corpus(content_list)
+    keyword_list = extract_keyword_of_corpus_return_keyword_and_value(content_list)
     
     current_articles["keyword"]=keyword_list
     # keyword_corpus_articles = statistic_keywords(current_articles["keyword"])
     keyword_corpus_articles = get_statistic_keywords(current_articles)
-    print("type of keyword_corpus_articles", type(keyword_corpus_articles))
+    #print("type of keyword_corpus_articles", type(keyword_corpus_articles))
 
     # ranking_keyword_follow_number_of_articles = sorted(keyword_corpus_articles.items(), key = lambda x:len(keyword_corpus_articles.values()), reverse=True)
     # print(type(ranking_keyword_follow_number_of_articles))
@@ -364,24 +421,36 @@ def get_top_keyword():
     current_articles = current_articles.groupby(["category_id"])
     # category_list = current_articles['category_id'].unique()
 
-    print(category_list)
+    #print(category_list)
     print("----------------")
     for cat in category_list:
         # list_keywords = list(current_articles.get_group(cat)['keyword'])
         _df = current_articles.get_group(cat)
-        print(_df)
+        #print(_df)
         # keyword_in_cat = statistic_keywords(list_keywords)
         keyword_in_cat = get_statistic_keywords(_df)
-        print("KW:")
-        print(keyword_in_cat)
+        #print("KW:")
+        #print(keyword_in_cat)
         cat_keyword_articles={}
         for key, value in keyword_in_cat.items():
           
             cat_keyword_articles[key]=keyword_corpus_articles.get(key)
         keyword_api[str(cat)] = ranking_by_numbers_of_articles(cat_keyword_articles)
         
-       
-    return keyword_api
+    # write result into file
+    new_data ={}
+    current_date = date.today() 
+    new_data['date']=str(current_date)
+    new_data['result']=keyword_api
+    # new_data_df = pd.DataFrame({'date':[current_date],'result':[keyword_api]}, index=[0])
+    # print(new_data_df)
+    try:
+        with open(word_cloud_path, mode='w', encoding='utf-8') as json_file:
+            json.dump(new_data, json_file, ensure_ascii=False)
+    except Exception as e:
+        print("get_top_keyword() catches error: ", e)
+    finally:
+        return keyword_api
 
 def extract_keyword_from_url(url):
     return list_keywords
@@ -389,3 +458,55 @@ def extract_keyword_from_url(url):
 def extract_keyword_from_paragraph(paragraph):
     extract_keyword_of_corpus(list(paragraph))
     return list_keywords
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# word_cloud api structure:
+# [
+#          {"keyword1": value1},
+#          {"keyword2": value2},
+#          {"keyword3": value3}] 
+def swap(x,y): 
+        temp = x
+        x =y 
+        y = temp
+def get_average_like_rates_of_keyword(list_of_like_rates):
+    return sum(list_of_like_rates)/len(list_of_like_rates)
+def get_bigger_tfidf_value(current_tfidf_value_1,current_tfidf_value_2 ):
+    if current_tfidf_value_1 > current_tfidf_value_2:
+        return current_tfidf_value_1
+    else:
+        return current_tfidf_value_2
+
+def initialize_word_cloud_object(keyword, list_of_articles):
+    _value = {}
+    like_rates=[]
+    tfidf_max_value =0
+
+    _value['number_of_articles'] = len(list_of_articles)
+    for article in list_of_articles:
+        _arr = article.split("~~~")
+        like_rates.append(int(_arr[2]))
+        current_tfidf_value = float(_arr[8])
+        print("current_tfidf_value_before",current_tfidf_value)
+        tfidf_max_value = get_bigger_tfidf_value(current_tfidf_value, tfidf_max_value)
+    _value['average_like_rate']=get_average_like_rates_of_keyword(like_rates)
+    _value['max_tfidf']=tfidf_max_value
+    _result_object={}
+    _result_object[keyword]=_value
+    return _result_object
+
+
+    
+def generate_word_cloud_api():
+    word_cloud_api={}
+    with open(word_cloud_path, "r", encoding="utf8") as json_file:
+        data=json.load(json_file)
+        data_api = data['result']
+    for category, word_list in data_api.items():
+        list_keyword_in_category=[]
+        for word_object in word_list:
+            for keyword, list_of_articles in word_object.items():
+                list_keyword_in_category.append(initialize_word_cloud_object(keyword, list_of_articles))
+                # print("likeRate", len(likeRates))
+                # print("tfidfValue", len(tfidfValue))
+        word_cloud_api[category]=list_keyword_in_category
+    return word_cloud_api

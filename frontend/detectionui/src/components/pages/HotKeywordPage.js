@@ -19,6 +19,38 @@ class HotKeywordPage extends React.Component {
     this.state = {};
   }
 
+  getCategoryName = categoryId => {
+    let categoryName = '';
+    switch (categoryId) {
+      case '1':
+        categoryName = 'Thời sự';
+        break;
+      case '2':
+        categoryName = 'Thị trường chứng khoán';
+        break;
+      case '3':
+        categoryName = 'Bất động sản';
+        break;
+      case '4':
+        categoryName = 'Doanh nghiệp';
+        break;
+      case '5':
+        categoryName = 'Tài chính - Ngân hàng';
+        break;
+      case '6':
+        categoryName = 'Tài chính quốc tế';
+        break;
+      case '7':
+        categoryName = 'Kinh tế vĩ mô';
+        break;
+      case '8':
+        categoryName = 'Hàng hóa - Nguyên liệu';
+        break;
+      default:
+        categoryName = '';
+    }
+    return categoryName;
+  };
   getDataFromChild = childData => {
     console.log ('getdatafromchild', childData);
     this.setState ({
@@ -41,7 +73,10 @@ class HotKeywordPage extends React.Component {
           ? <div>
               {console.log (this.state.categories)}
               {Object.entries (this.state.data).map (([key, value]) => (
-                <HotKeywordTable catName={key} kwData={value} />
+                <HotKeywordTable
+                  catName={this.getCategoryName (key)}
+                  kwData={value}
+                />
               ))}
             </div>
           : <div />}
