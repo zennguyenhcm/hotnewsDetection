@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 
-class TatfidfButton extends React.Component {
-  analyze = () => {
-    fetch ('http://127.0.0.1:5050/tatfidf', {mode: 'cors'})
+class WordCloudGenerateButton extends React.Component {
+  getData = () => {
+    fetch ('http://127.0.0.1:5050/wordCloud', {mode: 'cors'})
       .then (response => {
         return response.json ();
       })
@@ -21,14 +21,13 @@ class TatfidfButton extends React.Component {
         type="button"
         className="btn btn-primary"
         onClick={() => {
-          this.analyze ();
+          this.getData ();
         }}
       >
-        Analyze
+        Generate
       </button>
     );
   }
 }
 
-export default TatfidfButton;
-
+export default WordCloudGenerateButton;

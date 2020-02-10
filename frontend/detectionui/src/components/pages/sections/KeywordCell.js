@@ -43,7 +43,7 @@ export default function KeywordCell({content, news}) {
     <div>
       <td>
         {console.log ('type of content ', typeof Object.values (content))}
-        {Object.values (Object.values (content))}
+        {Object.values (content)}
         <i class="fas fa-cat" onClick={() => toggleCollapse (collapseID)} />
       </td>
       <MDBCollapse id="basicCollapse" isOpen={collapseID}>
