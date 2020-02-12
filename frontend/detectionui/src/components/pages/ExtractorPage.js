@@ -18,13 +18,31 @@ class ExtractorPage extends React.Component {
     });
   };
 
+  removeDuplicateKeyword = arr => {
+    var temp = [];
+    var uniqueArr = [];
+    for (let index = 0; index < arr.length; index++) {
+      var keyword = Object.keys (arr[index])[0];
+      // console.log ('keyword', keyword);
+      //check whether keyword
+      if (!temp.includes (keyword)) {
+        temp.push (keyword);
+        uniqueArr.push (arr[index]);
+      } else {
+        continue;
+      }
+    }
+    // console.log ('temp', temp);
+    return uniqueArr;
+  };
+
   getKeywordArray = data => {
     let keywordArr = [];
     for (let key in data) {
-      keywordArr.push (...data[key].slice (0, 5));
+      keywordArr.push (...data[key].slice (0, 15));
     }
-    let unique = [...new Set (Object.values (keywordArr))];
-    console.log ('unique', unique);
+    console.log ('keywordArr', keywordArr);
+    keywordArr = this.removeDuplicateKeyword (keywordArr);
     return keywordArr;
   };
 
