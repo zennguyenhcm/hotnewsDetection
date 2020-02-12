@@ -21,9 +21,9 @@ class ExtractorPage extends React.Component {
   getKeywordArray = data => {
     let keywordArr = [];
     for (let key in data) {
-      keywordArr.push (...Object.values (data[key].slice (0, 5)));
+      keywordArr.push (...data[key].slice (0, 5));
     }
-    let unique = [...new Set (keywordArr)];
+    let unique = [...new Set (Object.values (keywordArr))];
     console.log ('unique', unique);
     return keywordArr;
   };
