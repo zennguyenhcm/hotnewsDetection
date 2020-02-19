@@ -15,10 +15,10 @@ def convert_to_normal_array(arr_type_int64):
 
 def tatfidf_hotnewsAnalyze():
 
-    path = os.path.join(sys.path[0], "app/tatfidfModule/data.csv")
+    path = os.path.join(sys.path[0], "app/tatfidfModule/data_2020_02_03.csv")
     df = pd.read_csv(path)
     c = Tatfidf(df)
-    c.init(10)
+    c.init()
     c.fit()
 
     print(c.get_top_documents())

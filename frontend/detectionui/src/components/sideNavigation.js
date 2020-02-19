@@ -33,8 +33,7 @@ const SideNavigation = () => {
           </MDBBtn>
 
           <MDBBtn onClick={refreshPage}>
-            <NavLink to="/hotkeyword">
-
+            <NavLink to="/keywordOverview">
               <div>
                 <MDBIcon icon="fire" className="mr-3" />
                 Hot Keywords Viewer
@@ -43,7 +42,7 @@ const SideNavigation = () => {
           </MDBBtn>
 
           <MDBBtn onClick={refreshPage}>
-            <NavLink to="/insight">
+            <NavLink to="/tatfidfCompute">
               <div>
                 <MDBIcon icon="chart-line" className="mr-3" />
                 TA TFIDF{' '}
@@ -53,10 +52,10 @@ const SideNavigation = () => {
           </MDBBtn>
 
           <MDBBtn onClick={refreshPage}>
-            <NavLink to="/extractor">
+            <NavLink to="/wordCloud">
               <div>
-                <MDBIcon icon="eye" className="mr-3" />
-                Keywords Extractor
+                <MDBIcon icon="cloud" className="mr-3" />
+                Words Cloud
               </div>
 
             </NavLink>

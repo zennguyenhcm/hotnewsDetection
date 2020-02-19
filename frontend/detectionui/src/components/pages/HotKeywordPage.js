@@ -71,6 +71,7 @@ class HotKeywordPage extends React.Component {
 
         {this.state.data
           ? <div>
+              <p><str>Tin nóng</str></p>
               {console.log (this.state.categories)}
               {Object.entries (this.state.data).map (([key, value]) => (
                 <HotKeywordTable

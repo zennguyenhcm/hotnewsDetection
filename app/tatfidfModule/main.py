@@ -1,29 +1,16 @@
 
 import tatfidf
 import pandas as pd
+import operator
 
-
-# def main():
-#     df = pd.read_csv('data.csv')
-#     c = tatfidf.Tatfidf(df)
-#     c.init(10)
-#     c.fit()
-
-#     for doc in c.get_top_documents():
-#         print(doc[1], "|", doc[2], "|", doc[0])
-
-
-
-# if __name__ == '__main__':
-#     main()
-
-def tatfidf_hotnewsAnalyze():
-    
-    df = pd.read_csv('data.csv')
+def main():
+    df = pd.read_csv('data_2020_02_03.csv')
     c = tatfidf.Tatfidf(df)
-    c.init(10)
+    c.init()
     c.fit()
+    pd.DataFrame(c.documents)
 
-    # for doc in c.get_top_documents():
-    #     print(doc[1], "|", doc[2], "|", doc[0])
-    return c.get_top_documents()
+
+
+if __name__ == '__main__':
+    main()

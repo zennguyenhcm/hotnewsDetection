@@ -17,7 +17,11 @@ export default function HotKeywordTable({catName, kwData}) {
   const size = kwData.lenght > 2 ? 2 : kwData.lenght;
   const data = kwData.slice (0, size).map (item => (
     <tr>
-      <KeywordCell content={Object.keys (item)} news={Object.values (item)} />
+      <KeywordCell
+        content={Object.keys (item)}
+        news={Object.values (item)}
+        style={{width: '100%'}}
+      />
     </tr>
   ));
   return (
