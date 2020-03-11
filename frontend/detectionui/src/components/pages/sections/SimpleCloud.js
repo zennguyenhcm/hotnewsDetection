@@ -90,8 +90,8 @@ export default class SimpleCloud extends React.Component {
     console.log ('simpled_cloud_data', data);
     return (
       <TagCloud
-        minSize={12}
-        maxSize={35}
+        minSize={18}
+        maxSize={42}
         tags={this.getTagDataArray (data)}
         // onClick={tag => alert (`'${tag.value}' was selected!`)}
         renderer={this.customRenderer (this.getRenderValue (data))}

@@ -28,6 +28,7 @@ export default function HotKeywordTable({catName, kwData}) {
     <MDBCard>
       <MDBCardHeader><strong>{catName}</strong></MDBCardHeader>
       <MDBCardBody>
+      <p>Từ khóa: </p>
         {data}
         {/* <Cell content="hello" /> */}
       </MDBCardBody>

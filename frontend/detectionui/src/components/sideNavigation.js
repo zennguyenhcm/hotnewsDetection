@@ -16,7 +16,7 @@ const SideNavigation = () => {
             <NavLink exact={true} to="/">
               <div>
                 <MDBIcon icon="home" className="mr-3" />
-                FirstPage
+                Home
               </div>
 
             </NavLink>
@@ -36,7 +36,7 @@ const SideNavigation = () => {
             <NavLink to="/keywordOverview">
               <div>
                 <MDBIcon icon="fire" className="mr-3" />
-                Hot Keywords Viewer
+                TFIDF
               </div>
             </NavLink>
           </MDBBtn>

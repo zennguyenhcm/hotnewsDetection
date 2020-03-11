@@ -1,21 +1,43 @@
 import React from 'react';
 import TatfidfButton from './sections/TatfidfButton';
-import {MDBCard, MDBCardBody} from 'mdbreact';
+import TfidfButton from './sections/TfidfButton';
+import {MDBCard, MDBCardBody, MDBCardHeader, MDBCardFooter} from 'mdbreact';
 import NewsViewer from './sections/NewsViewer';
 
 class InsightPage extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
-      data: [],
+      ta_data: [],
+      tf_data: [],
     };
   }
 
-  getDataFromChild = data => {
+  ta_getDataFromChild = data => {
     console.log ('getdata', data);
+    console.log ('type_of_data', typeof data);
     this.setState (
       {
-        data: data,
+        ta_data: data,
+      },
+      data => {
+        // console.log ('callback');
+        // return (
+        //   <MDBCard>
+        //     <MDBCardBody>
+        //       {this.renderListArticles (this.state.data)}
+        //     </MDBCardBody>
+        //   </MDBCard>
+        // );
+      }
+    );
+  };
+
+  tf_getDataFromChild = data => {
+    // console.log ('getdata', data);
+    this.setState (
+      {
+        tf_data: data,
       },
       data => {
         // console.log ('callback');
@@ -51,8 +73,31 @@ class InsightPage extends React.Component {
   render () {
     return (
       <React.Fragment>
-        <TatfidfButton parentCallback={this.getDataFromChild} />
-        <NewsViewer data={this.state.data} />
+        <div className="row">
+          <div className="col-6">
+            <MDBCard>
+              <MDBCardHeader>TA TF-IDF</MDBCardHeader>
+            </MDBCard>
+            <MDBCardBody>
+              <NewsViewer data={this.state.ta_data} algo_name="tatfidf" />
+            </MDBCardBody>
+            <MDBCardFooter>
+              <TatfidfButton parentCallback={this.ta_getDataFromChild} />
+            </MDBCardFooter>
+          </div>
+          <div className="col-6">
+            <MDBCard>
+              <MDBCardHeader>TF-IDF</MDBCardHeader>
+            </MDBCard>
+            <MDBCardBody>
+              <NewsViewer data={this.state.tf_data} algo_name="tfidf" />
+            </MDBCardBody>
+            <MDBCardFooter>
+              <TfidfButton parentCallback={this.tf_getDataFromChild} />
+            </MDBCardFooter>
+          </div>
+        </div>
+
       </React.Fragment>
     );
   }

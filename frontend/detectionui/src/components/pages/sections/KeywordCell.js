@@ -59,7 +59,7 @@ export default function KeywordCell({content, news}) {
           width: '100%',
         }}
       >
-        <span>Từ khóa: <b>{Object.values (content)}</b></span>
+        <span><b>{Object.values (content)}</b></span>
         <i
           class="fa fa-eye p-2"
           onClick={() => toggleCollapse (collapseID)}
