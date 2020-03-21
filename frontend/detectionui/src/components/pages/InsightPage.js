@@ -76,7 +76,7 @@ class InsightPage extends React.Component {
         <div className="row">
           <div className="col-6">
             <MDBCard>
-              <MDBCardHeader>TA TF-IDF</MDBCardHeader>
+              <MDBCardHeader><b>TA TF-IDF</b></MDBCardHeader>
             </MDBCard>
             <MDBCardBody>
               <NewsViewer data={this.state.ta_data} algo_name="tatfidf" />
@@ -87,7 +87,7 @@ class InsightPage extends React.Component {
           </div>
           <div className="col-6">
             <MDBCard>
-              <MDBCardHeader>TF-IDF</MDBCardHeader>
+              <MDBCardHeader><b>TF-IDF</b></MDBCardHeader>
             </MDBCard>
             <MDBCardBody>
               <NewsViewer data={this.state.tf_data} algo_name="tfidf" />

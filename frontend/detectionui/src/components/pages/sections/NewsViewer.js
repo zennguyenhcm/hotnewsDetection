@@ -57,6 +57,7 @@ class NewsViewer extends React.Component {
                     }}
                   >
                     <a
+                    target="_blank"
                       title={
                         'Like: ' +
                           item['fb_like'] +

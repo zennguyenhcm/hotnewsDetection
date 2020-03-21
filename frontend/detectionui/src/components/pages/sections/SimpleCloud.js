@@ -17,6 +17,7 @@ const normalizeNumber = {
   c: 0.2,
 };
 
+
 export default class SimpleCloud extends React.Component {
   getColorByIndex = index => {
     if (index <= 4) {

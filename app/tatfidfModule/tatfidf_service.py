@@ -13,19 +13,26 @@ def convert_to_normal_array(arr_type_int64):
     return new_arr
 
 
-def tatfidf_hotnewsAnalyze():
+def tatfidf_hotnewsAnalyze(n_articles):
 
     path = os.path.join(sys.path[0], "app/tatfidfModule/data_2020_02_03.csv")
     df = pd.read_csv(path)
+    df.drop_duplicates(subset="title", keep="last", inplace=True)
     c = Tatfidf(df)
     c.init()
     c.fit()
 
-    print(c.get_top_documents())
+    # print(c.get_top_documents())
     result_dict = {}
+    count = 0
     for doc in enumerate(c.get_top_documents()):
-        print("type of doc[1]:", type(doc[1]))
-        result_dict[str(doc[0])] = convert_to_normal_array(doc[1])
+        # print("type of doc[1]:", type(doc[1]))
+        if count <= n_articles:
+            count += 1
+            result_dict[str(doc[0])] = convert_to_normal_array(doc[1])
+        else:
+            break
+
     # print(result_dict)
     return result_dict
 

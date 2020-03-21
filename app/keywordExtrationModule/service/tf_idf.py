@@ -192,11 +192,11 @@ def extract_keyword_of_corpus_return_n_keyword_and_value(list_content, n):
         for key in keywords:
             # item = {}
             # item[key]=str(keywords[key])
-            print("key", key)
+            # print("key", key)
             item = (key, keywords.get(key))
             output += str(item) + ";"
         list_of_keyword_and_value.append(output)
-    print("list_of_keyword_and_value", list_of_keyword_and_value)
+    # print("list_of_keyword_and_value", list_of_keyword_and_value)
     return list_of_keyword_and_value
 
 
@@ -221,11 +221,11 @@ def extract_keyword_of_corpus_return_keyword_and_value(list_content):
         for key in keywords:
             # item = {}
             # item[key]=str(keywords[key])
-            print("key", key)
+            # print("key", key)
             item = (key, keywords.get(key))
             output += str(item) + ";"
         list_of_keyword_and_value.append(output)
-    print("list_of_keyword_and_value", list_of_keyword_and_value)
+    # print("list_of_keyword_and_value", list_of_keyword_and_value)
     return list_of_keyword_and_value
 
 
@@ -327,7 +327,7 @@ def get_hot_news_list_follow_specific_metric(
         r"C:\Users\mytie\Documents\hotnewsDetection\app\tatfidfModule\data_2020_02_03.csv",
         encoding="utf-8",
     )
-
+    # source_df.drop_duplicates(subset="title", keep="last", inplace=True)
     # rank df follow metric (like, share, comment, total)
     ranking_df = source_df.sort_values(name_of_metric_column, ascending=False)
 
@@ -435,17 +435,17 @@ def get_statistic_keywords(article_df):
                 # json_acceptable_string = word.replace("'", "\"")
                 # print("string of dictionary: ", json.loads(json_acceptable_string))
                 # print("type of: ", type(json_acceptable_string))
-                print("split_result:", re.split(r"(\(|\)|,|\s)", sub_str))
-                print("split_result:", len(re.split(r"(\(|\)|,|\s)", sub_str)))
+                # print("split_result:", re.split(r"(\(|\)|,|\s)", sub_str))
+                # print("split_result:", len(re.split(r"(\(|\)|,|\s)", sub_str)))
                 result_list = re.split(r"(\(|\)|,|\s)", sub_str)
-                print(result_list)
-                print(
-                    "type",
-                    type(result_list[2]),
-                    "value",
-                    result_list[2].replace("'", ""),
-                )
-                print("type", type(result_list[6]), "value", result_list[6])
+                # print(result_list)
+                # print(
+                #     "type",
+                #     type(result_list[2]),
+                #     "value",
+                #     result_list[2].replace("'", ""),
+                # )
+                # print("type", type(result_list[6]), "value", result_list[6])
                 word = result_list[2].replace("'", "")
                 tfidf_value = result_list[6]
 
@@ -527,15 +527,15 @@ def ranking_by_numbers_of_articles_and_get_n_article(
         key: len(value) for key, value in dict_of_statictis_keywords.items()
     }
 
-    for key, value in dict_article_arr_len.items():
-        print("key: ", key, ", value: ", value)
-        break
+    # for key, value in dict_article_arr_len.items():
+    #     print("key: ", key, ", value: ", value)
+    #     break
     import operator
 
     sorted_key_list = sorted(
         dict_article_arr_len.items(), key=operator.itemgetter(1), reverse=True
     )
-    print("sorted_key_list[0]", sorted_key_list[0])
+    # print("sorted_key_list[0]", sorted_key_list[0])
 
     sorted_list = []
     top_n_keywords_list = sorted_key_list[0:top_n_keywords]
@@ -545,7 +545,7 @@ def ranking_by_numbers_of_articles_and_get_n_article(
 
         for news in values[0:number_of_articles]:
             _arr = news.split("~~~")
-            print(_arr)
+            # print(_arr)
             _obj = {}
             _obj["url"] = _arr[0]
             _obj["title"] = _arr[1]
@@ -764,7 +764,7 @@ def initialize_word_cloud_object(keyword, list_of_articles):
         _arr = article.split("~~~")
         like_rates.append(int(_arr[2]))
         current_tfidf_value = float(_arr[8])
-        print("current_tfidf_value_before", current_tfidf_value)
+        # print("current_tfidf_value_before", current_tfidf_value)
         tfidf_max_value = get_bigger_tfidf_value(current_tfidf_value, tfidf_max_value)
     _value["average_like_rate"] = get_average_like_rates_of_keyword(like_rates)
     _value["max_tfidf"] = tfidf_max_value
@@ -775,7 +775,7 @@ def initialize_word_cloud_object(keyword, list_of_articles):
 
 def is_today_wordcloud_dict_stored():
     with open(wordcloud_dictionary_path, "r", encoding="utf-8") as f:
-        print("hello")
+        # print("hello")
         data = json.load(f)
         lastest_value = data[-1]
         if str(date.today()) in lastest_value["date"]:

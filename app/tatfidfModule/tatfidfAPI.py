@@ -8,6 +8,6 @@ tatfidf_page = Blueprint("tatfidf_page", __name__, template_folder="templates")
 @tatfidf_page.route("/tatfidf", methods=["POST", "GET"])
 def tatfidf():
     print("TATFIDF analyzing ...")
-    response = jsonify(tatfidfService.tatfidf_hotnewsAnalyze())
+    response = jsonify(tatfidfService.tatfidf_hotnewsAnalyze(20))
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response

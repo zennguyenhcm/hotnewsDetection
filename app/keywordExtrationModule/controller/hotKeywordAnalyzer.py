@@ -35,7 +35,7 @@ def generate_keyword_cloud():
 @hotKeywordAnalyzer_page.route("/getHotNews", methods=["POST", "GET"])
 def get_hot_news_list():
     response = jsonify(
-        tf_idf_extractor.get_hot_news_list_follow_specific_metric(20, "fb_like", 8)
+        tf_idf_extractor.get_hot_news_list_follow_specific_metric(20, "fb_total", 8)
     )
     response.headers.add("Access-Control-Allow-Origin", "*")
     # response = "hello"
