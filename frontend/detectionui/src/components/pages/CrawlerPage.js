@@ -127,11 +127,11 @@ class CrawlerPage extends React.Component {
             <MDBCard className="mt-5">
               <MDBView className="gradient-card-header blue darken-2">
                 <h4 className="h4-responsive text-white">
-                  <strong>Articles List</strong>
+                  <strong>Danh sách bài báo</strong>
                 </h4>
                 <h3>
                   <strong>
-                    Number of articles:
+                    Số lượng bài báo:
                     {this.state.number_of_articles}
                   </strong>
                 </h3>

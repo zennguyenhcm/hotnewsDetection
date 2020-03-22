@@ -25,7 +25,9 @@ class NewsViewer extends React.Component {
                     }}
                   >
                     <a title={item[1]} href={item[2]}>
-                      <span style={{fontSize: '16px'}}><b>{item[1]}</b></span>
+                      <span style={{fontSize: '16px'}}>
+                        <b style={{color: 'blue'}}>{item[1]}</b>
+                      </span>
                     </a>
                     <hr />
                   </div>
@@ -57,7 +59,7 @@ class NewsViewer extends React.Component {
                     }}
                   >
                     <a
-                    target="_blank"
+                      target="_blank"
                       title={
                         'Like: ' +
                           item['fb_like'] +
@@ -75,7 +77,7 @@ class NewsViewer extends React.Component {
                       href={item['url']}
                     >
                       <span style={{fontSize: '16px'}}>
-                        <b>{item['title']}</b>
+                        <b style={{color: 'blue'}}>{item['title']}</b>
                       </span>
                     </a>
                     <hr />

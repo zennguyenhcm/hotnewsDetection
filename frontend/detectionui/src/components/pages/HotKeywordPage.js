@@ -68,10 +68,9 @@ class HotKeywordPage extends React.Component {
     return (
       <React.Fragment>
         <DetectButton parentCallback={this.getDataFromChild} />
-
+        <div style={{color: 'red', fontSize: '32px'}}><b>Tin nóng</b></div>
         {this.state.data
           ? <div>
-              <p><str>Tin nóng</str></p>
               {console.log (this.state.categories)}
               {Object.entries (this.state.data).map (([key, value]) => (
                 <HotKeywordTable

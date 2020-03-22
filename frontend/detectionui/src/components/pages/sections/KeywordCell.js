@@ -29,12 +29,13 @@ const getArticleInfo = (str, index) => {
   console.log ('index', typeof parseInt (new_fool_number));
   return (
     <div style={{backgroundColor: '#' + color.toString ()}}>
-      {console.log (arr)}
-      <p>Category: {arr[4]}</p>
-      <p>Title: {arr[5]}</p>
-      <a href={arr[6]}>Link: {arr[6]}</a>
-      <p>Like rates: {arr[2]}</p>
-      <p>Keywords: {arr[7]}</p>
+      <div style={{color: 'white'}}>
+        {console.log (arr)}
+        <p>Title: <b style={{fontSize: '18px'}}>{arr[5]}</b></p>
+        <a href={arr[6]}>Link: {arr[6]}</a>
+        <p>Like rates: {arr[2]}</p>
+        <p>Keywords: {arr[7]}</p>
+      </div>
       <hr />
     </div>
   );

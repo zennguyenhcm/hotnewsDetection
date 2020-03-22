@@ -36,7 +36,7 @@ const SideNavigation = () => {
             <NavLink to="/keywordOverview">
               <div>
                 <MDBIcon icon="fire" className="mr-3" />
-                TFIDF
+                Danh sách tin nóng
               </div>
             </NavLink>
           </MDBBtn>
@@ -45,7 +45,7 @@ const SideNavigation = () => {
             <NavLink to="/tatfidfCompute">
               <div>
                 <MDBIcon icon="chart-line" className="mr-3" />
-                TA TFIDF{' '}
+                So sánh{' '}
               </div>
 
             </NavLink>

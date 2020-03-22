@@ -26,8 +26,8 @@ export default function HotKeywordTable({catName, kwData}) {
   ));
   return (
     <MDBCard>
-      <MDBCardHeader><strong>{catName}</strong></MDBCardHeader>
-      <MDBCardBody>
+      <MDBCardHeader text="white"color="blue"><strong>{catName}</strong></MDBCardHeader>
+      <MDBCardBody className="rgba-white-strong">
       <p>Từ khóa: </p>
         {data}
         {/* <Cell content="hello" /> */}
