@@ -26,6 +26,7 @@ def fool1():
 
 @hotKeywordAnalyzer_page.route("/wordCloud", methods=["POST", "GET"])
 def generate_keyword_cloud():
+    print("Analyzing ...")
     response = jsonify(tf_idf_extractor.generate_word_cloud_api())
     response.headers.add("Access-Control-Allow-Origin", "*")
     print("Analyzing done!")
